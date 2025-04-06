@@ -25,6 +25,13 @@ const CarListComponent:React.FC<CarListProps> = ({cars, onDelete}) => {
         currentPage * itemsPerPage,
         (currentPage + 1) * itemsPerPage
       );
+
+    const handleDelete = (carId: number) =>{
+        const confirmDelete = window.confirm('Are you sure you want to delete this car?');
+      if (confirmDelete) {
+        onDelete(carId);
+      }
+    }
     
     useEffect(() => {
         if (cars.length === 0) {
@@ -75,7 +82,7 @@ const CarListComponent:React.FC<CarListProps> = ({cars, onDelete}) => {
             </div>   
             <div className="car-actions">
                 <button onClick={() => navigate(`/edit/${car.id}`)} className="edit-btn">Edit</button>
-                <button onClick={() => onDelete(car.id)} className="delete-btn">Delete</button>
+                <button onClick={() => handleDelete(car.id)} className="delete-btn">Delete</button>
             </div>
             </div>
         ))}

@@ -19,27 +19,30 @@ function App() {
   const carService = new CarService("http://localhost:3000/api/cars"); 
 
   useEffect(() => {
-    // Fetch cars sorted by price in descending order
     carService.get({searchTerm: searchTerm, sortBy: sortField, order: sortOrder })
         .then((cars) => setCars(cars))
         .catch((error) => console.error('Failed to load sorted cars:', error));
-  }, [cars, searchTerm, sortField, sortOrder]);
+  }, [searchTerm, sortField, sortOrder]);
 
   const  handleAddCar = async (newCar: Omit<Car, 'id'>) => {
     try {
       const addedCar = await carService.add(newCar);
       setCars((prev) => [...prev, addedCar]);
+      window.alert('Car added successfully!');
     } catch (error) {
       console.error('Failed to add car:', error);
-  }
+      window.alert('Failed to add car. Please try again.'+ error)
+    }
   };
 
   const handleEdit = async (car: Car) => {
     try {
         const updatedCar = await carService.update(car.id, car);
         setCars((prev) => prev.map((c) => (c.id === car.id ? updatedCar : c)));
+        window.alert('Car edited successfully!');
     } catch (error) {
         console.error('Failed to edit car:', error);
+        window.alert('Failed to edit car. Please try again.'+ error)
     }
 };
 
@@ -47,8 +50,10 @@ const handleDelete = async (id: number) => {
     try {
         await carService.delete(id);
         setCars((prev) => prev.filter((c) => c.id !== id));
+        window.alert('Car deleted successfully!');
     } catch (error) {
         console.error('Failed to delete car:', error);
+        window.alert('Failed to delete car. Please try again.'+ error)
     }
 };
 

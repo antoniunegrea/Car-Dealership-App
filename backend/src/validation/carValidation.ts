@@ -1,6 +1,7 @@
 import Joi from 'joi';
 
 export const carSchema = Joi.object({
+    id: Joi.number().min(0),
     manufacturer: Joi.string().min(2).max(50).required(),
     model: Joi.string().min(1).max(50).required(),
     year: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
@@ -9,6 +10,7 @@ export const carSchema = Joi.object({
 });
 
 export const carUpdateSchema = Joi.object({
+    id: Joi.number().min(0),
     manufacturer: Joi.string().min(2).max(50),
     model: Joi.string().min(1).max(50),
     year: Joi.number().integer().min(1900).max(new Date().getFullYear()),

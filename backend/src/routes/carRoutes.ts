@@ -5,7 +5,7 @@ import { SortField } from '../model/types';
 
 const router = express.Router();
 
-let cars: Car[] = [
+export let cars: Car[] = [
 {
     id: 1,
     manufacturer: 'Toyota',
@@ -71,7 +71,7 @@ let cars: Car[] = [
     image_url: 'https://issimi-vehicles-cdn.b-cdn.net/publicamlvehiclemanagement/VehicleDetails/662/timestamped-1729570000535-1-2024-Porsche-911-Carrera-S-214888.jpg?width=3840&quality=75',
     },
 ];
-let nextId = 9;
+export let nextId = 9;
 
 router.get('/', (req: Request, res: Response) => {
     let result = [...cars];
@@ -105,6 +105,7 @@ router.post('/', (req: Request, res: Response) => {
     const { error, value } = carSchema.validate(req.body);
     if (error) {
         res.status(400).json({ message: error.details[0].message });
+        return;
     }
 
     const newCar: Car = { id: nextId++, ...value };
@@ -115,14 +116,18 @@ router.post('/', (req: Request, res: Response) => {
 router.patch('/:id', (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const carIndex = cars.findIndex(c => c.id === id);
+    console.log("carIndex"+ carIndex);
     if (carIndex === -1) {
         res.status(404).json({ message: 'Car not found' });
+        return;
     }
 
     const { error, value } = carUpdateSchema.validate(req.body);
     if (error) {
         res.status(400).json({ message: error.details[0].message });
+        return;
     }
+    console.log("valid");
 
     cars[carIndex] = { ...cars[carIndex], ...value };
     res.json(cars[carIndex]);
@@ -133,6 +138,7 @@ router.delete('/:id', (req: Request, res: Response) => {
     const carIndex = cars.findIndex(c => c.id === id);
     if (carIndex === -1) {
         res.status(404).json({ message: 'Car not found' });
+        return;
     }
 
     cars.splice(carIndex, 1);
