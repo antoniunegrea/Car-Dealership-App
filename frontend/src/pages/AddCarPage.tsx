@@ -58,7 +58,7 @@ const AddCarPage: React.FC<AddCarProps> = ({ onAddCar }) => {
         <label>Image URL</label>
         <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
 
-        <button type="submit">Edit Car</button>
+        <button type="submit">Add Car</button>
       </form>
     </div> 
   );

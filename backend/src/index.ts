@@ -5,7 +5,10 @@ import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());          // Enable CORS for all routes
+app.use(cors({
+    origin: 'http://localhost:3001', // Replace with your frontend URL
+    methods: ['GET', 'POST', 'PATCH', 'DELETE']
+}));          // Enable CORS for all routes
 app.use(express.json());  // Parse JSON bodies
 app.use('/api/cars', carRoutes);
 

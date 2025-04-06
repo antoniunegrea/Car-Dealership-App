@@ -11,12 +11,11 @@ interface EditCarProps {
 const EditCarPage: React.FC<EditCarProps> = ( {cars, onEditCar }) => {
     const { id } = useParams<{ id?: string }>();
     const carId = id ? parseInt(id) : 0;
-    console.log('Editing car with ID:', id);
-    const carToEdit = cars[carId-1];
+    const carToEdit = cars.filter((car)=> car.id === carId)[0];
     const [manufacturer, setManufacturer] = useState(carToEdit.manufacturer);
     const [model, setModel] = useState(carToEdit.model);
     const [year, setYear] = useState<number>(Number(carToEdit.year));
-    const [price, setPrice] = useState<number>(Number(carToEdit.year));
+    const [price, setPrice] = useState<number>(Number(carToEdit.price));
     const [imageUrl, setImageUrl] = useState<string>(carToEdit.image_url || '');
 
     const navigate = useNavigate();

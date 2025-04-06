@@ -36,6 +36,89 @@ class CarService{
             throw error;
         }
     }
+/*
+    async getCarById(params?: {id?: number}):Promise<Car>{
+        try {
+            let url = this.baseUrl;
+            if (params) {
+                const query = new URLSearchParams();
+                if (params.id) query.append('id', String(params.id));
+                url += `?${query.toString()}`;
+            }
+            const response = await fetch(url, {
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data: Car = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching car with given id:', error);
+            throw error;
+        }
+    }
+*/
+    async add(newCar: Omit<Car, 'id'>): Promise<Car> {
+        try {
+            const response = await fetch(this.baseUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newCar),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data: Car = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error adding car:', error);
+            throw error;
+        }
+    }
+
+    async update(id: number, car: Partial<Car>): Promise<Car> {
+        try {
+            const response = await fetch(`${this.baseUrl}/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(car),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data: Car = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error updating car:', error);
+            throw error;
+        }
+    }
+
+    async delete(id: number): Promise<void> {
+        try {
+            const response = await fetch(`${this.baseUrl}/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error deleting car:', error);
+            throw error;
+        }
+    }
 }
 
 export default CarService;
