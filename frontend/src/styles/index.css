@@ -1,0 +1,11 @@
+.components-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.body-container
+{
+    width:80%;
+    position: relative;
+}

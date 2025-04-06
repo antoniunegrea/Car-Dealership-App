@@ -1,0 +1,14 @@
+.main-container
+{
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    gap: 10px
+}
+
+.select-field, .select-order{
+    height: 30px;
+    width: 100px;
+    border-radius: 6px;
+    margin-right: 10px;
+}
