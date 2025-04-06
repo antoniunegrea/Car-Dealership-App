@@ -22,7 +22,6 @@ const SortingComponent: React.FC<SortControlProps> = ({ sortField, sortOrder, on
         Sort by
       <select value={sortField} onChange={handleFieldChange} className='select-field'>
         <option value="manufacturer">Manufacturer</option>
-        <option value="model">Model</option>
         <option value="year">Year</option>
         <option value="price">Price</option>
       </select>

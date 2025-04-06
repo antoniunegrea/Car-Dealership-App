@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route,BrowserRouter } from "react-router-dom";
 import Index from './pages/Index'
 import AddCarPage from './pages/AddCarPage';
 import './App.css';
 import Car from './model/Car';
 import EditCarPage from './pages/EditCarPage';
+import CarService from './service/carService'
+import { SortField, SortOrder } from './model/Types';
 
 let nextId = 4;
 
 function App() {
-  
+  /*
   const [cars, setCars] = useState<Car[]>([
     {
       id: 1,
@@ -76,7 +78,22 @@ function App() {
       image_url: 'https://issimi-vehicles-cdn.b-cdn.net/publicamlvehiclemanagement/VehicleDetails/662/timestamped-1729570000535-1-2024-Porsche-911-Carrera-S-214888.jpg?width=3840&quality=75',
     },
   ]);
+  */
+  const [cars, setCars] = useState<Car[]>([]);
+
+  const [sortField, setSortField] = useState<SortField>('manufacturer');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
+  const [searchTerm, setSearchTerm] = useState('');
   
+  const carService = new CarService("http://localhost:3000/api/cars"); 
+
+  useEffect(() => {
+    // Fetch cars sorted by price in descending order
+    carService.get({searchTerm: searchTerm, sortBy: sortField, order: sortOrder })
+        .then((cars) => setCars(cars))
+        .catch((error) => console.error('Failed to load sorted cars:', error));
+  }, [searchTerm, sortField, sortOrder]);
 
   const handleAddCar = (newCar: Omit<Car, 'id'>) => {
     setCars((prev) => [...prev, { ...newCar, id: nextId++ }]);
@@ -93,7 +110,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Index cars={cars} handleDelete={handleDelete}/>}></Route>
+        <Route path='/' element={<Index cars={cars} handleDelete={handleDelete} 
+                                        sortField={sortField}
+                                        setSortField={setSortField}
+                                        sortOrder={sortOrder}
+                                        setSortOrder={setSortOrder}
+                                        searchTerm={searchTerm}
+                                        setSearchTerm={setSearchTerm} />}></Route>
         <Route path='/add' element={<AddCarPage onAddCar={handleAddCar}/>}></Route>
         <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEdit} />} />
         <Route

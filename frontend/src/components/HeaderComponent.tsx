@@ -1,7 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import '../styles/header.css';
 
-const HeaderComponent : React.FC = () =>{
+interface HeaderProps {
+    searchTerm: string;
+    setSearchTerm: (searchTerm: string) => void;
+}
+
+const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>{
     const navigate = useNavigate();
     const handleAddButtonClick = () => {
         navigate('/add');
@@ -16,6 +21,7 @@ const HeaderComponent : React.FC = () =>{
                 type="text"
                 placeholder="Search..."
                 className="search-bar"
+                onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <button className='add-button' onClick={handleAddButtonClick}>Add Car</button>
             </div>

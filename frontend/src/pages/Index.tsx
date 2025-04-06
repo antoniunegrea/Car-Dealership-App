@@ -10,14 +10,17 @@ import '../styles/index.css'
 interface IndexProps{
     cars: Car[];
     handleDelete: (id: number) => void;
+    sortField: SortField;
+    setSortField: (sortField: SortField) => void;
+    sortOrder: SortOrder;
+    setSortOrder: (sortOrder: SortOrder) => void;
+    searchTerm: string;
+    setSearchTerm: (searchTerm: string) => void;
 }
 
 
-const Index: React.FC<IndexProps> = ({ cars, handleDelete }) => {
-    const [sortField, setSortField] = useState<SortField>('manufacturer');
-    const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
-
-    const sortedCars = useMemo(() => {
+const Index: React.FC<IndexProps> = ({ cars, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm}) => {
+    /*const sortedCars = useMemo(() => {
         const sorted = [...cars].sort((a, b) => {
           const aVal = a[sortField];
           const bVal = b[sortField];
@@ -27,10 +30,10 @@ const Index: React.FC<IndexProps> = ({ cars, handleDelete }) => {
         });
         return sorted;
       }, [cars, sortField, sortOrder]);
-
+    */
     return (
         <div className='components-container'>
-            <HeaderComponent/>
+            <HeaderComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
             <div className='body-container'>
                 <SortingComponent
                     sortField={sortField}
@@ -40,7 +43,7 @@ const Index: React.FC<IndexProps> = ({ cars, handleDelete }) => {
                     setSortOrder(order);
                     }}
                 />
-                <CarListComponent cars={sortedCars} onDelete={handleDelete}/>
+                <CarListComponent cars={cars} onDelete={handleDelete}/>
             </div>
         </div>
     );
