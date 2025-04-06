@@ -15,14 +15,30 @@ interface IndexProps{
     setSortOrder: (sortOrder: SortOrder) => void;
     searchTerm: string;
     setSearchTerm: (searchTerm: string) => void;
+    isServerOnline: boolean;
 }
 
 
-const Index: React.FC<IndexProps> = ({ cars, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm}) => {
+const Index: React.FC<IndexProps> = ({ cars, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline}) => {
     return (
         <div className='components-container'>
             <HeaderComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
             <div className='body-container'>
+                <div
+                    className='server-status'
+                    style={{
+                        backgroundColor: isServerOnline ? 'transparent' : 'red',
+                        height: isServerOnline? '0px' : '50px',
+                        alignContent: 'center',
+                        color: 'white',
+                        textAlign: 'center',
+                        marginBottom: '10px',
+                        borderRadius: '4px',
+                        transition: 'all 0.3s ease',
+                    }}
+                    >
+                    {!isServerOnline && 'Server is offline'}
+                </div>
                 <SortingComponent
                     sortField={sortField}
                     sortOrder={sortOrder}

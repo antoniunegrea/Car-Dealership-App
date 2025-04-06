@@ -6,11 +6,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-    origin: 'http://localhost:3001', // Replace with your frontend URL
-    methods: ['GET', 'POST', 'PATCH', 'DELETE']
-}));          // Enable CORS for all routes
-app.use(express.json());  // Parse JSON bodies
+    origin: 'http://localhost:3001', // frontend URL
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+}));
+
+app.use(express.json()); // parse JSON
+
 app.use('/api/cars', carRoutes);
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

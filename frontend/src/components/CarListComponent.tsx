@@ -13,18 +13,24 @@ const CarListComponent:React.FC<CarListProps> = ({cars, onDelete}) => {
     const navigate = useNavigate();
 
     const [stats, setStats] = useState({minPrice: 0, maxPrice: 0, avgPrice: 0});
-
-    const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 4;
   
-    const handlePageChange = (event: { selected: number }) => {
-        setCurrentPage(event.selected);
-    };
+    const [visibleCount, setVisibleCount] = useState(10);
+    const incrementCount = 5; 
+    
+    const displayedCars = cars.slice(0, visibleCount);
 
-    const displayedCars = cars.slice(
-        currentPage * itemsPerPage,
-        (currentPage + 1) * itemsPerPage
-      );
+    useEffect(() => {
+        const handleScroll = () => {
+          const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+      
+          if (nearBottom && visibleCount < cars.length) {
+            setVisibleCount(prev => Math.min(prev + incrementCount, cars.length));
+          }
+        };
+      
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, [visibleCount, cars.length]);
 
     const handleDelete = (carId: number) =>{
         const confirmDelete = window.confirm('Are you sure you want to delete this car?');
@@ -86,14 +92,6 @@ const CarListComponent:React.FC<CarListProps> = ({cars, onDelete}) => {
             </div>
             </div>
         ))}
-        <ReactPaginate
-          previousLabel={"← Previous"}
-          nextLabel={"Next →"}
-          pageCount={Math.ceil(cars.length / itemsPerPage)}
-          onPageChange={handlePageChange}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-        />
         </div>
     );
 };

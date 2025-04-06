@@ -15,8 +15,21 @@ function App() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
   
   const carService = new CarService("http://localhost:3000/api/cars"); 
+
+  useEffect(() => {
+    const checkServerStatus = async () => {
+        const online = await carService.isServerOnline();
+        setIsServerOnline(online);
+    };
+    checkServerStatus();
+    const intervalId = setInterval(checkServerStatus, 4000);
+    return () => clearInterval(intervalId);
+}, []);
+  
 
   useEffect(() => {
     carService.get({searchTerm: searchTerm, sortBy: sortField, order: sortOrder })
@@ -66,7 +79,9 @@ const handleDelete = async (id: number) => {
                                         sortOrder={sortOrder}
                                         setSortOrder={setSortOrder}
                                         searchTerm={searchTerm}
-                                        setSearchTerm={setSearchTerm} />}></Route>
+                                        setSearchTerm={setSearchTerm} 
+                                        isServerOnline={isServerOnline}
+                                        />}></Route>
         <Route path='/add' element={<AddCarPage onAddCar={handleAddCar}/>}></Route>
         <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEdit} />} />
         <Route
