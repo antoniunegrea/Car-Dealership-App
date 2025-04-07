@@ -1,10 +1,10 @@
 import express from 'express';
 import carRoutes from './routes/carRoutes';
 import cors from 'cors';
-import { WebSocketServer, WebSocket } from 'ws';
-import http from 'http';
-import { cars } from './routes/carRoutes';
-import Car from './model/car';
+import runDaemonThread from './utils/daemonThread';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +15,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type']
 }));
 
-app.use(express.json()); // parse JSON
+app.use(express.json());
 
 app.use('/api/cars', carRoutes);
 
@@ -23,66 +23,72 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'OK' });
 });
 
-const server = http.createServer(app);
+//runDaemonThread(app);
 
-// Create WebSocket server
-const wss = new WebSocketServer({ server });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    },
+});
 
-
-// WebSocket connection handling
-// In your WebSocket server setup
-wss.on('connection', (ws: WebSocket) => {
-    console.log('Client connected to WebSocket');
-  
-    // Send current cars list to newly connected client
-    ws.send(JSON.stringify({ type: 'initial', data: cars }));
-
-    // Set an interval to send a ping message every 30 seconds
-    const pingInterval = setInterval(() => {
-        if (ws.readyState === WebSocket.OPEN) {
-            ws.ping();
+const upload = multer({
+    storage,
+    limits: { fileSize: 500 * 1024 * 1024 }, // Limit to 500MB
+    fileFilter: (req, file, cb) => {
+        const fileTypes = /mp4|mov|avi|mkv/;
+        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = fileTypes.test(file.mimetype);
+        if (extname && mimetype) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only video files (mp4, mov, avi, mkv) are allowed!'));
         }
-    }, 30000); // Ping every 30 seconds
+    },
+});
 
-    ws.on('close', () => {
-        console.log('Client disconnected from WebSocket');
-        clearInterval(pingInterval);  // Clear the ping interval when client disconnects
-    });
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-    ws.on('pong', () => {
-        console.log('Received pong from client');  // Optional: Log pong response
+app.post('/api/upload', upload.single('file'), (req, res) => {
+    if (!req.file) {
+        res.status(400).json({ message: 'No file uploaded' });
+        return;
+    }
+    const fileUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+    console.log('Uploaded file URL:', fileUrl);
+    res.status(200).json({ message: 'File uploaded successfully', fileUrl });
+});
+
+app.get('/api/download/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, 'uploads', filename);
+    if (fs.existsSync(filePath)) {
+        res.download(filePath, filename, (err) => {
+            if (err) {
+                res.status(500).json({ message: 'Error downloading file' });
+            }
+        });
+    } else {
+        res.status(404).json({ message: 'File not found' });
+    }
+});
+
+app.get('/api/files', (req, res) => {
+    fs.readdir('uploads/', (err, files) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error reading files' });
+        }
+        const fileList = files.map(file => ({
+            name: file,
+            url: `http://localhost:${PORT}/uploads/${file}`,
+        }));
+        res.json(fileList);
     });
 });
 
-
-// Function to generate a random car
-const manufacturers = ['Honda', 'Chevrolet', 'Hyundai', 'Kia', 'Mazda'];
-const models = ['Civic', 'Malibu', 'Tucson', 'Sportage', 'CX-5'];
-const getRandomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-const generateRandomCar = (id: number): Car => ({
-    id,
-    manufacturer: manufacturers[getRandomInt(0, manufacturers.length - 1)],
-    model: models[getRandomInt(0, models.length - 1)],
-    year: getRandomInt(2018, 2024),
-    price: getRandomInt(15000, 60000),
-    image_url: `https://example.com/images/${id}.jpg`,
-});
-
-// Start generating new cars every 5 seconds
-let nextId = cars.length > 0 ? Math.max(...cars.map(car => car.id)) + 1 : 1;
-setInterval(() => {
-    const newCar = generateRandomCar(nextId++);
-    cars.push(newCar);
-    console.log('Generated new car:', newCar);
-
-    // Broadcast the new car to all connected clients
-    wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify({ type: 'newCar', data: newCar }));
-        }
-    });
-}, 3000);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

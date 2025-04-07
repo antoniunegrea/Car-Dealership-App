@@ -15,6 +15,11 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
     const handleChartsButtonClick = () =>{
         navigate('/charts');
     }
+
+    const handleFilesButtonClick = () =>{
+        navigate('/files');
+    }
+
     return (
         <div className="header">
             <div className="title">
@@ -29,6 +34,7 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
                 />
                 <button className='add-button' onClick={handleAddButtonClick}>Add Car</button>
                 <button className='charts-button' onClick={handleChartsButtonClick}>Charts</button>
+                <button className='files-button' onClick={handleFilesButtonClick}>Files</button>
             </div>
             
         </div>

@@ -8,6 +8,7 @@ import EditCarPage from './pages/EditCarPage';
 import CarService from './service/carService'
 import { SortField, SortOrder } from './model/Types';
 import Charts from './pages/Charts';
+import FileManagerPage from './pages/FileManagerPage';
 
 function App() {
   const [cars, setCars] = useState<Car[]>([]);
@@ -147,6 +148,7 @@ const handleDelete = async (id: number) => {
         <Route path='/add' element={<AddCarPage onAddCar={handleAddCar}/>}></Route>
         <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEdit} />} />
         <Route path="/charts" element={<Charts cars={cars}/>} />
+        <Route path="/files" element={<FileManagerPage />} />
         <Route
           path="*"
           element={<div style={{ padding: 20 }}>404 - Page Not Found</div>}

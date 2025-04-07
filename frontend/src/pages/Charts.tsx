@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, LineChart, Line } from "recharts";
-import { useNavigate } from "react-router-dom"; // Changed from "react-router" to "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import Car from "../model/Car";
 
-// Define the props interface
 interface ChartsProps {
     cars: Car[];
 }
 
-// Define data shapes for recharts
 interface PriceData {
     name: string;
     price: number;
@@ -27,31 +25,27 @@ interface YearData {
 const Charts: React.FC<ChartsProps> = ({ cars }) => {
     const navigate = useNavigate();
 
-    // State with type annotations
     const [priceData, setPriceData] = useState<PriceData[]>([]);
     const [manufacturerData, setManufacturerData] = useState<ManufacturerData[]>([]);
     const [yearData, setYearData] = useState<YearData[]>([]);
 
     useEffect(() => {
-        // Price data for BarChart
         const priceStats: PriceData[] = cars.map(car => ({
             name: car.model,
             price: car.price,
         }));
         setPriceData(priceStats);
 
-        // Manufacturer data for PieChart
         const manufacturerCounts = cars.reduce((acc: { [key: string]: number }, car: Car) => {
             acc[car.manufacturer] = (acc[car.manufacturer] || 0) + 1;
             return acc;
         }, {});
         const manufacturerStats: ManufacturerData[] = Object.entries(manufacturerCounts).map(([name, value]) => ({
             name,
-            value: value as number, // TypeScript needs this since Object.entries returns [string, any]
+            value: value as number,
         }));
         setManufacturerData(manufacturerStats);
 
-        // Year data for LineChart
         const yearCounts = cars.reduce((acc: { [key: string]: number }, car: Car) => {
             acc[car.year] = (acc[car.year] || 0) + 1;
             return acc;
@@ -61,9 +55,8 @@ const Charts: React.FC<ChartsProps> = ({ cars }) => {
             value: value as number,
         }));
         setYearData(yearStats);
-    }, [cars]); // Fixed dependency: use "cars" instead of "carsList"
+    }, [cars]);
 
-    // Colors for PieChart
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
     return (
