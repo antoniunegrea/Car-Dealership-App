@@ -95,6 +95,9 @@ router.delete('/:id', (req: Request, res: Response) => {
     res.status(204).send();
 });
 
+router.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
 
 
 export default router;

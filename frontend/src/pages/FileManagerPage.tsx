@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../styles/fileManager.css';
 
 interface UploadedFile {
     url: string;
@@ -72,49 +73,79 @@ const FileManagerPage: React.FC = () => {
         document.body.removeChild(link);
     };
 
+    const isVideoFile = (filename: string) => {
+        const videoTypes = /\.(mp4|mov|avi|mkv)$/i;
+        return videoTypes.test(filename);
+    };
+
     return (
-        <div style={{ padding: 20 }}>
-            <button onClick={() => navigate('/')} style={{ marginBottom: 20 }}>
-                Go Back Home
-            </button>
-            <h2>File Manager</h2>
-            <div>
-                <h3>Upload Video</h3>
-                <input
-                    type="file"
-                    accept="video/mp4,video/mov,video/avi,video/mkv"
-                    onChange={handleFileChange}
-                />
-                <button onClick={handleUpload} disabled={!file || uploadProgress > 0}>
-                    {uploadProgress > 0 ? `Uploading (${uploadProgress}%)` : 'Upload'}
+        <div className="file-manager-container">
+            {/* Header Section */}
+            <div className="header-section">
+                <h2>File Manager</h2>
+                <button className="back-button" onClick={() => navigate('/')}>
+                    Go Back Home
                 </button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {uploadProgress > 0 && (
-                    <div style={{ marginTop: 10 }}>
-                        <progress value={uploadProgress} max="100" />
-                    </div>
-                )}
             </div>
-            <div style={{ marginTop: 20 }}>
+
+            {/* Upload Section */}
+            <div className="upload-section">
+                <h3>Upload File</h3>
+                <div className="upload-form">
+                    <div className="upload-input-group">
+                        <input
+                            type="file"
+                            accept="video/mp4,video/mov,video/avi,video/x-matroska,application/zip,application/x-rar-compressed,.rar"
+                            onChange={handleFileChange}
+                            className="upload-input"
+                        />
+                        <button
+                            onClick={handleUpload}
+                            disabled={!file || uploadProgress > 0}
+                            className="upload-button"
+                        >
+                            {uploadProgress > 0 ? `Uploading (${uploadProgress}%)` : 'Upload'}
+                        </button>
+                    </div>
+                    <p className="supported-types">
+                        Supported file types: .mp4, .mov, .avi, .mkv, .zip, .rar
+                    </p>
+                    {error && (
+                        <p className="error-message">
+                            {error}
+                        </p>
+                    )}
+                    {uploadProgress > 0 && (
+                        <div className="progress-container">
+                            <progress value={uploadProgress} max="100" />
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Uploaded Files Section */}
+            <div className="files-section">
                 <h3>Uploaded Files</h3>
                 {uploadedFiles.length === 0 ? (
-                    <p>No files uploaded yet.</p>
+                    <p className="no-files">No files uploaded yet.</p>
                 ) : (
-                    <ul>
+                    <ul className="files-list">
                         {uploadedFiles.map((file, index) => (
-                            <li key={index}>
-                                <span>{file.name}</span>
+                            <li key={index} className="file-item">
+                                <span className="file-name">{file.name}</span>
                                 <button
                                     onClick={() => handleDownload(file.url, file.name)}
-                                    style={{ marginLeft: 10 }}
+                                    className="download-button"
                                 >
                                     Download
                                 </button>
-                                <video
-                                    controls
-                                    src={file.url}
-                                    style={{ width: 200, marginLeft: 10 }}
-                                />
+                                <div className="file-preview">
+                                    {isVideoFile(file.name) ? (
+                                        <video controls src={file.url} />
+                                    ) : (
+                                        <span>(Archive file)</span>
+                                    )}
+                                </div>
                             </li>
                         ))}
                     </ul>

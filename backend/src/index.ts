@@ -19,10 +19,8 @@ app.use(express.json());
 
 app.use('/api/cars', carRoutes);
 
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'OK' });
-});
 
+//run daemon thred to add random cars
 //runDaemonThread(app);
 
 const storage = multer.diskStorage({
@@ -37,15 +35,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 500 * 1024 * 1024 }, // Limit to 500MB
+    limits: { fileSize: 10000 * 1024 * 1024 }, // Limit to 10000MB
     fileFilter: (req, file, cb) => {
-        const fileTypes = /mp4|mov|avi|mkv/;
+        const fileTypes = /mp4|mov|avi|mkv|zip|rar/;
         const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = fileTypes.test(file.mimetype);
+        const allowedMimeTypes = [
+            'video/mp4',
+            'video/quicktime', 
+            'video/x-msvideo', 
+            'video/x-matroska',
+            'application/zip', 
+            'application/x-rar-compressed',
+            'application/x-zip-compressed',
+            'application/rar',
+            'application/octet-stream',
+        ];
+        console.log(`File: ${file.originalname}, MIME Type: ${file.mimetype}`);
+        const mimetype = allowedMimeTypes.includes(file.mimetype);
         if (extname && mimetype) {
             cb(null, true);
         } else {
-            cb(new Error('Only video files (mp4, mov, avi, mkv) are allowed!'));
+            console.log(`Rejected file: ${file.originalname}, extname: ${extname}, mimetype: ${mimetype}`);
+            cb(new Error('Only video files (mp4, mov, avi, mkv) and archive files (zip, rar) are allowed!'));
         }
     },
 });

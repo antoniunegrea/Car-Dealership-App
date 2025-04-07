@@ -123,7 +123,7 @@ class CarService{
     async isServerOnline(): Promise<boolean> {
         try {
             console.log("checking server...")
-            const response = await fetch(`${this.baseUrl.replace('/api/cars', '')}/health`, {
+            const response = await fetch(`${this.baseUrl}/health`, {
                 method: 'GET',
             });
             return response.ok;

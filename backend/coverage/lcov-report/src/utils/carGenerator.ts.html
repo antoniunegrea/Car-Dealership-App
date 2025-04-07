@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/validation/carValidation.ts</title>
+    <title>Code coverage report for src/utils/carGenerator.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/validation</a> carValidation.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/utils</a> carGenerator.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>0/7</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>0/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -79,45 +79,39 @@
 <a name='L14'></a><a href='#L14'>14</a>
 <a name='L15'></a><a href='#L15'>15</a>
 <a name='L16'></a><a href='#L16'>16</a>
-<a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L17'></a><a href='#L17'>17</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Joi from 'joi';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Car from "../model/car";
 &nbsp;
-export const carSchema = Joi.object({
-    id: Joi.number().min(0),
-    manufacturer: Joi.string().min(2).max(50).required(),
-    model: Joi.string().min(1).max(50).required(),
-    year: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
-    price: Joi.number().min(0).required(),
-    image_url: Joi.string().uri().required()
+// Function to generate a random car
+const manufacturers = <span class="cstat-no" title="statement not covered" >['Honda', 'Chevrolet', 'Hyundai', 'Kia', 'Mazda'];</span>
+const models = <span class="cstat-no" title="statement not covered" >['Civic', 'Malibu', 'Tucson', 'Sportage', 'CX-5'];</span>
+const getRandomInt = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(m</span>in: number, max: number) =&gt; <span class="cstat-no" title="statement not covered" >Math.floor(Math.random() * (max - min + 1)) + min;</span></span>
+&nbsp;
+const generateRandomCar = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(i</span>d: number): Car =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span>
+    id,
+    manufacturer: manufacturers[getRandomInt(0, manufacturers.length - 1)],
+    model: models[getRandomInt(0, models.length - 1)],
+    year: getRandomInt(2018, 2024),
+    price: getRandomInt(15000, 60000),
+    image_url: `https://example.com/images/${id}.jpg`,
 });
 &nbsp;
-export const carUpdateSchema = Joi.object({
-    id: Joi.number().min(0),
-    manufacturer: Joi.string().min(2).max(50),
-    model: Joi.string().min(1).max(50),
-    year: Joi.number().integer().min(1900).max(new Date().getFullYear()),
-    price: Joi.number().min(0),
-    image_url: Joi.string().uri()
-}).min(1); // At least one field must be provided for PATCH</pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >export default generateRandomCar;</span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
