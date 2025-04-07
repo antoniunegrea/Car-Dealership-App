@@ -26,8 +26,7 @@
     border-radius: 6px;
 }
 
-.add-button
-{
+.add-button, .charts-button{
     height: 40px;
     width:100px;
     margin-left: 10px;
@@ -35,6 +34,13 @@
     border: none;
     cursor: pointer;
     font-weight: bold;
-    background-color: #28e917;
     color: white;
+}
+
+.add-button{
+    background-color: #28e917;
+}
+
+.charts-button{
+    background-color: rgb(44, 44, 187);
 }
