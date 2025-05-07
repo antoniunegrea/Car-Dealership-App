@@ -7,6 +7,7 @@ import Charts from './pages/Charts';
 import FileManagerPage from './pages/FileManagerPage';
 import Car from './model/Car';
 import CarService from './service/carService';
+import ServerService from './service/serverService'
 import { SortField, SortOrder } from './model/Types';
 import './App.css';
 
@@ -31,6 +32,7 @@ function App() {
         return saved ? JSON.parse(saved) : [];
     });
 
+    const serverService = new ServerService("http://localhost:3000/api");
     const carService = new CarService("http://localhost:3000/api/cars");
 
     // Save queued operations to localStorage whenever they change
@@ -90,7 +92,7 @@ function App() {
     // Check server status and sync queued operations when online
     useEffect(() => {
         const checkServerStatus = async () => {
-            const online = await carService.isServerOnline();
+            const online = await serverService.isServerOnline();
             if (online && !isServerOnline && queuedOperations.length > 0) {
                 // Server just came online, sync queued operations
                 await syncQueuedOperations();
