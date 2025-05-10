@@ -1,6 +1,6 @@
 import Car from "./Car";
 
-export type SortField = 'manufacturer' | 'model' | 'year' | 'price';
+export type SortField = 'manufacturer' | 'model' | 'year' | 'price' | 'name' | 'location';
 export type SortOrder = 'asc' | 'desc';
 
 export type OperationType = 'add' | 'update' | 'delete';

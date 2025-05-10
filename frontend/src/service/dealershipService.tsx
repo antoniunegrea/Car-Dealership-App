@@ -8,13 +8,12 @@ class DealershipService {
         this.baseUrl = url;
     }
 
-    async getAll(params?: { name?: string; location?: string; sortBy?: string; order?: SortOrder }): Promise<Dealership[]> {
+    async getAll(params?: { searchTerm?: string; sortBy?: string; order?: SortOrder }): Promise<Dealership[]> {
         try {
             let url = this.baseUrl;
             if (params) {
                 const query = new URLSearchParams();
-                if (params.name) query.append('name', params.name);
-                if (params.location) query.append('location', params.location);
+                if (params.searchTerm) query.append('searchTerm', params.searchTerm);
                 if (params.sortBy) query.append('sortBy', params.sortBy);
                 if (params.order) query.append('order', params.order);
                 url += `?${query.toString()}`;

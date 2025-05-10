@@ -10,8 +10,11 @@ import CarService from './service/carService';
 import ServerService from './service/serverService'
 import DealershipService from './service/dealershipService';
 import { SortField, SortOrder } from './model/Types';
+import Dealerships from './pages/Dealerships';
+import Dealership from './model/Dealership';
 import './App.css';
-
+import EditDealershipPage from './pages/EditDealershipPage';
+import AddDealershipPage from './pages/AddDealershipPage';
 type OperationType = 'add' | 'update' | 'delete';
 
 interface QueuedOperation {
@@ -22,9 +25,13 @@ interface QueuedOperation {
 
 function App() {
     const [cars, setCars] = useState<Car[]>([]);
-    const [sortField, setSortField] = useState<SortField>('manufacturer');
-    const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
-    const [searchTerm, setSearchTerm] = useState('');
+    const [dealerships, setDealerships] = useState<Dealership[]>([]);
+    const [sortFieldCars, setSortFieldCars] = useState<SortField>('manufacturer');
+    const [sortFieldDealerships, setSortFieldDealerships] = useState<SortField>('name');
+    const [sortOrderCars, setSortOrderCars] = useState<SortOrder>('asc');
+    const [sortOrderDealerships, setSortOrderDealerships] = useState<SortOrder>('asc');
+    const [searchTermCars, setSearchTermCars] = useState('');
+    const [searchTermDealerships, setSearchTermDealerships] = useState('');
     const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [queuedOperations, setQueuedOperations] = useState<QueuedOperation[]>(() => {
@@ -109,22 +116,28 @@ function App() {
     // Add a wrapper for setSearchTerm to log changes
     const handleSearchTermChange = (newSearchTerm: string) => {
         console.log("Search term changing to:", newSearchTerm);
-        setSearchTerm(newSearchTerm);
+        setSearchTermCars(newSearchTerm);
     };
 
     // Fetch cars via HTTP (initial load or fallback)
     useEffect(() => {
-        console.log("Effect triggered with searchTerm:", searchTerm);
+        console.log("Effect triggered with searchTerm:", searchTermCars);
         if (isServerOnline) {
             console.log("Server is online, making request");
-            carService.get({ searchTerm, sortBy: sortField, order: sortOrder })
+            carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars })
                 .then((data) => {
                     console.log("Received cars data:", data);
                     setCars(data);
                 })
                 .catch((error) => console.error('Failed to load cars:', error));
+            dealershipService.getAll({ searchTerm: searchTermDealerships, sortBy: sortFieldDealerships, order: sortOrderDealerships })
+                .then((data) => {
+                    console.log("Received dealerships data:", data);
+                    setDealerships(data);
+                })
+                .catch((error) => console.error('Failed to load dealerships:', error));
         }
-    }, [searchTerm, sortField, sortOrder, isServerOnline]);
+    }, [searchTermCars, sortFieldCars, sortOrderCars, searchTermDealerships, sortFieldDealerships, sortOrderDealerships, isServerOnline]);
 
     // Sync queued operations with the server
     const syncQueuedOperations = async () => {
@@ -179,7 +192,7 @@ function App() {
         }
     };
 
-    const handleEdit = async (car: Car) => {
+    const handleEditCar = async (car: Car) => {
         if (!isServerOnline) {
             // Server is offline, queue the operation
             setCars((prev) => prev.map(c => c.id === car.id ? car : c));
@@ -201,7 +214,7 @@ function App() {
         }
     };
 
-    const handleDelete = async (id: number) => {
+    const handleDeleteCar = async (id: number) => {
         if (!isServerOnline) {
             // Server is offline, queue the operation
             setCars((prev) => prev.filter(c => c.id !== id));
@@ -223,6 +236,58 @@ function App() {
         }
     };
 
+    const handleDeleteDealership = async (id: number) => {
+        if (!isServerOnline) {
+            // Server is offline, queue the operation
+            // TODO: Implement
+            return;
+        }
+
+        try {
+            await dealershipService.delete(id);
+            setDealerships((prev) => prev.filter((d) => d.id !== id));
+            window.alert('Dealership deleted successfully!');
+        } catch (error) {
+            console.error('Failed to delete dealership:', error);
+            window.alert('Failed to delete dealership. Please try again.' + error);
+        }
+    }
+
+    const handleAddDealership = async (newDealership: Omit<Dealership, 'id' | 'cars'>) => {
+        if (!isServerOnline) {
+            // Server is offline, queue the operation
+            // TODO: Implement
+            return;
+        }
+
+        try {
+            const addedDealership = await dealershipService.add(newDealership);
+            setDealerships((prev) => [...prev, addedDealership]);
+            window.alert('Dealership added successfully!');
+        } catch (error) {
+            console.error('Failed to add dealership:', error);
+            window.alert('Failed to add dealership. Please try again.' + error);
+        }
+    }
+
+    const handleEditDealership = async (dealership: Dealership) => {
+        if (!isServerOnline) {
+            // Server is offline, queue the operation
+            // TODO: Implement
+            return;
+        }
+
+        try {
+            const updatedDealership = await dealershipService.update(dealership.id, dealership);
+            setDealerships((prev) => prev.map((d) => (d.id === dealership.id ? updatedDealership : d)));
+            window.alert('Dealership edited successfully!');
+        } catch (error) {
+            console.error('Failed to edit dealership:', error);
+            window.alert('Failed to edit dealership. Please try again.' + error);
+        }
+    }
+    
+    
     return (
         <BrowserRouter>
             <Routes>
@@ -231,21 +296,24 @@ function App() {
                     element={
                         <Index
                             cars={cars}
-                            handleDelete={handleDelete}
-                            sortField={sortField}
-                            setSortField={setSortField}
-                            sortOrder={sortOrder}
-                            setSortOrder={setSortOrder}
-                            searchTerm={searchTerm}
+                            handleDelete={handleDeleteCar}
+                            sortField={sortFieldCars}
+                            setSortField={setSortFieldCars}
+                            sortOrder={sortOrderCars}
+                            setSortOrder={setSortOrderCars}
+                            searchTerm={searchTermCars}
                             setSearchTerm={handleSearchTermChange}
                             isServerOnline={isServerOnline}
                         />
                     }
                 />
                 <Route path='/add' element={<AddCarPage onAddCar={handleAddCar} dealershipService={dealershipService}/>} />
-                <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEdit} dealershipService={dealershipService}/>} />
+                <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEditCar} dealershipService={dealershipService}/>} />
                 <Route path="/charts" element={<Charts cars={cars} />} />
                 <Route path="/files" element={<FileManagerPage />} />
+                <Route path="/dealerships" element={<Dealerships dealerships={dealerships} handleDelete={handleDeleteDealership} sortField={sortFieldDealerships} setSortField={setSortFieldDealerships} sortOrder={sortOrderDealerships} setSortOrder={setSortOrderDealerships} searchTerm={searchTermDealerships} setSearchTerm={handleSearchTermChange} isServerOnline={isServerOnline}/>} />
+                <Route path="/add/dealership" element={<AddDealershipPage onAddDealership={handleAddDealership} dealershipService={dealershipService}/>} />
+                <Route path="/edit/dealership/:id" element={<EditDealershipPage dealerships={dealerships} onEditDealership={handleEditDealership}/>} />
                 <Route
                     path="*"
                     element={<div style={{ padding: 20 }}>404 - Page Not Found</div>}
