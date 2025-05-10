@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import Car from '../model/car';
+import { Car } from '../model/Car';
 import { carSchema, carUpdateSchema } from '../validation/carValidation';
 import { SortField } from '../model/types';
 import path from 'path';

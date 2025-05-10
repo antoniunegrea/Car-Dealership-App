@@ -1,6 +1,9 @@
+import 'reflect-metadata';
 import express from 'express';
-import carRoutes from './routes/carRoutes';
 import cors from 'cors';
+import { AppDataSource } from './config/database';
+import carRoutes from './routes/car.routes';
+import dealershipRoutes from './routes/dealership.routes';
 import runDaemonThread from './utils/daemonThread';
 import multer from 'multer';
 import path from 'path';
@@ -9,16 +12,16 @@ import fs from 'fs';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-    origin: 'http://localhost:3001',
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type']
-}));
-
+// Middleware
+app.use(cors());
 app.use(express.json());
 
+// Routes
 app.use('/api/cars', carRoutes);
-
+app.use('/api/dealerships', dealershipRoutes);
+app.use('/api/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
+});
 
 //run daemon thred to add random cars
 //runDaemonThread(app);
@@ -100,7 +103,16 @@ app.get('/api/files', (req, res) => {
     });
 });
 
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Initialize TypeORM connection
+AppDataSource.initialize()
+    .then(() => {
+        console.log('Database connection established');
+        
+        // Start server
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error during Data Source initialization:', error);
+    });
