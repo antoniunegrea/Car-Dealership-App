@@ -8,6 +8,9 @@ interface HeaderProps {
 
 const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>{
     const navigate = useNavigate();
+    
+    console.log("HeaderComponent rendered with searchTerm:", searchTerm);
+
     const handleAddButtonClick = () => {
         navigate('/add');
     }
@@ -20,6 +23,11 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
         navigate('/files');
     }
 
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("Search input changed to:", e.target.value);
+        setSearchTerm(e.target.value);
+    };
+
     return (
         <div className="header">
             <div className="title">
@@ -30,7 +38,8 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
                 type="text"
                 placeholder="Search..."
                 className="search-bar"
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchTerm}
+                onChange={handleSearchChange}
                 />
                 <button className='add-button' onClick={handleAddButtonClick}>Add Car</button>
                 <button className='charts-button' onClick={handleChartsButtonClick}>Charts</button>

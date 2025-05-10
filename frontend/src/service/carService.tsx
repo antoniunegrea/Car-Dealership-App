@@ -19,8 +19,11 @@ class CarService{
                 if (params.order) query.append('order', params.order);
                 url += `?${query.toString()}`;
             }
-            console.log("url: " + url)
-            console.log("Search" + params?.searchTerm)
+            console.log("Making request to URL:", url);
+            console.log("Search term:", params?.searchTerm);
+            console.log("Sort by:", params?.sortBy);
+            console.log("Order:", params?.order);
+            
             const response = await fetch(url, {
                 method: 'GET',
             });
@@ -30,6 +33,7 @@ class CarService{
             }
 
             const data: Car[] = await response.json();
+            console.log("Received data:", data);
             return data;
         } catch (error) {
             console.error('Error fetching cars:', error);
@@ -86,7 +90,7 @@ class CarService{
     async update(id: number, car: Partial<Car>): Promise<Car> {
         try {
             const response = await fetch(`${this.baseUrl}/${id}`, {
-                method: 'PATCH',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },

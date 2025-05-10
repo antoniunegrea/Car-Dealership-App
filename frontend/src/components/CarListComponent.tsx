@@ -45,7 +45,7 @@ const CarListComponent:React.FC<CarListProps> = ({cars, onDelete}) => {
           return;
         }
     
-        const prices = cars.map(car => car.price);
+        const prices = cars.map(car => Number(car.price));
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
         const avgPrice = Math.floor(prices.reduce((sum, price) => sum + price, 0) / prices.length);
@@ -70,19 +70,19 @@ const CarListComponent:React.FC<CarListProps> = ({cars, onDelete}) => {
             <div className='statistics' 
                 style={{
                     backgroundColor: 
-                        car.price === stats.maxPrice?
+                        Number(car.price) === stats.maxPrice?
                         'lightcoral':
-                        car.price === stats.minPrice?
+                        Number(car.price) === stats.minPrice?
                         'lightgreen':
-                        Math.abs(car.price-stats.avgPrice) < 100?
+                        Math.abs(Number(car.price)-stats.avgPrice) < 100?
                         'lightblue':
                         'transparent',
                     }}
-            >{car.price === stats.maxPrice?
+            >{Number(car.price) === stats.maxPrice?
                 'The most expensive car':
-                car.price === stats.minPrice?
+                Number(car.price) === stats.minPrice?
                 'The cheapest car':
-                Math.abs(car.price-stats.avgPrice) < 100?
+                Math.abs(Number(car.price)-stats.avgPrice) < 100?
                 'The average price car':
                 ''}
             </div>   

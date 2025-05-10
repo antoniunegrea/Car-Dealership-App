@@ -28,11 +28,34 @@ export class CarController {
                 minPrice,
                 maxPrice,
                 dealership_id,
+                searchTerm,
                 sortBy = 'id',
                 order = 'ASC'
             } = req.query;
 
             const where: FindOptionsWhere<Car> = {};
+
+            if (searchTerm) {
+                const search = `%${searchTerm}%`;
+                // Only allow sorting by specific fields
+                const validSortFields = ['manufacturer', 'model', 'year', 'price', 'id'];
+                const sortField = validSortFields.includes(String(sortBy)) ? String(sortBy) : 'id';
+                const sortOrder = (order === 'ASC' || order === 'DESC' || order === 'asc' || order === 'desc') ? order.toUpperCase() : 'ASC';
+
+                console.log('QueryBuilder search:', { sortField, sortOrder });
+
+                const cars = await carRepository
+                    .createQueryBuilder('car')
+                    .where('LOWER(car.manufacturer) LIKE LOWER(:search)', { search })
+                    .orWhere('LOWER(car.model) LIKE LOWER(:search)', { search })
+                    .orWhere('car.year::text LIKE :search', { search })
+                    .orWhere('car.price::text LIKE :search', { search })
+                    .orderBy(`car.${sortField}`, sortOrder as 'ASC' | 'DESC')
+                    .getMany();
+                
+                res.json(cars);
+                return;
+            }
 
             if (manufacturer) where.manufacturer = Like(`%${manufacturer}%`);
             if (model) where.model = Like(`%${model}%`);

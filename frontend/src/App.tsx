@@ -8,6 +8,7 @@ import FileManagerPage from './pages/FileManagerPage';
 import Car from './model/Car';
 import CarService from './service/carService';
 import ServerService from './service/serverService'
+import DealershipService from './service/dealershipService';
 import { SortField, SortOrder } from './model/Types';
 import './App.css';
 
@@ -33,6 +34,7 @@ function App() {
     });
 
     const serverService = new ServerService("http://localhost:3000/api");
+    const dealershipService = new DealershipService("http://localhost:3000/api/dealerships");
     const carService = new CarService("http://localhost:3000/api/cars");
 
     // Save queued operations to localStorage whenever they change
@@ -48,7 +50,7 @@ function App() {
 
         const connectWebSocket = () => {
             console.log('Attempting to connect to WebSocket...');
-            const websocket = new WebSocket('ws://localhost:3000');
+            const websocket = new WebSocket('ws://localhost:3000/api');
             setWs(websocket);
 
             websocket.onopen = () => {
@@ -104,15 +106,25 @@ function App() {
         return () => clearInterval(intervalId);
     }, [isServerOnline, queuedOperations]);
 
+    // Add a wrapper for setSearchTerm to log changes
+    const handleSearchTermChange = (newSearchTerm: string) => {
+        console.log("Search term changing to:", newSearchTerm);
+        setSearchTerm(newSearchTerm);
+    };
+
     // Fetch cars via HTTP (initial load or fallback)
     useEffect(() => {
-        if (isServerOnline && !ws) {
-            console.log("getCars");
+        console.log("Effect triggered with searchTerm:", searchTerm);
+        if (isServerOnline) {
+            console.log("Server is online, making request");
             carService.get({ searchTerm, sortBy: sortField, order: sortOrder })
-                .then((data) => setCars(data))
+                .then((data) => {
+                    console.log("Received cars data:", data);
+                    setCars(data);
+                })
                 .catch((error) => console.error('Failed to load cars:', error));
         }
-    }, [searchTerm, sortField, sortOrder, isServerOnline, ws]);
+    }, [searchTerm, sortField, sortOrder, isServerOnline]);
 
     // Sync queued operations with the server
     const syncQueuedOperations = async () => {
@@ -225,13 +237,13 @@ function App() {
                             sortOrder={sortOrder}
                             setSortOrder={setSortOrder}
                             searchTerm={searchTerm}
-                            setSearchTerm={setSearchTerm}
+                            setSearchTerm={handleSearchTermChange}
                             isServerOnline={isServerOnline}
                         />
                     }
                 />
-                <Route path='/add' element={<AddCarPage onAddCar={handleAddCar} />} />
-                <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEdit} />} />
+                <Route path='/add' element={<AddCarPage onAddCar={handleAddCar} dealershipService={dealershipService}/>} />
+                <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEdit} dealershipService={dealershipService}/>} />
                 <Route path="/charts" element={<Charts cars={cars} />} />
                 <Route path="/files" element={<FileManagerPage />} />
                 <Route
