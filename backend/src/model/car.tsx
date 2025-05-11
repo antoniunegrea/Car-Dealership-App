@@ -1,4 +1,4 @@
-export interface Car {
+/*export interface Car {
     id: number;
     manufacturer: string;
     model: string;
@@ -7,4 +7,4 @@ export interface Car {
     image_url: string;
 }
 
-export default Car;
+export default Car;*/

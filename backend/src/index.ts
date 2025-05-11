@@ -8,6 +8,7 @@ import runDaemonThread from './utils/daemonThread';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { Car } from './model/Car';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,24 @@ app.use('/api/dealerships', dealershipRoutes);
 app.use('/api/health', (req, res) => {
     res.status(200).json({ status: 'OK' });
 });
+
+app.use('/api/stats', async (req, res) => {
+  try {
+    const data = await AppDataSource.getRepository(Car)
+      .createQueryBuilder('car')
+      .select('car.manufacturer', 'manufacturer')
+      .addSelect('AVG(car.price)', 'averagePrice')
+      .groupBy('car.manufacturer')
+      .orderBy('AVG(car.price)', 'DESC')
+      .getRawMany();
+
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 
 //run daemon thred to add random cars
 //runDaemonThread(app);

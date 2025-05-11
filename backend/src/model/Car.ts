@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Dealership } from './Dealership';
 
 @Entity('cars')
@@ -6,18 +6,23 @@ export class Car {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Index()
     @Column()
     manufacturer: string;
 
+    @Index()
     @Column()
     model: string;
 
+    @Index()
     @Column()
     year: number;
 
+    @Index()
     @Column('decimal', { precision: 10, scale: 2 })
     price: number;
 
+    @Index()
     @Column({ nullable: true })
     image_url: string;
 
@@ -25,6 +30,7 @@ export class Car {
     @JoinColumn({ name: 'dealership_id' })
     dealership: Dealership;
 
+    @Index()
     @Column()
     dealership_id: number;
 } 
