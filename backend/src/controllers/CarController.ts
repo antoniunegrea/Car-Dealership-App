@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../config/database';
 import { Car } from '../model/Car';
 import { Like, Between, FindOptionsWhere } from 'typeorm';
+import { logUserAction } from '../utils/logService';
 
 const carRepository = AppDataSource.getRepository(Car);
 
@@ -11,6 +12,7 @@ export class CarController {
         try {
             const car = carRepository.create(req.body);
             const result = await carRepository.save(car);
+            await logUserAction((req as any).user, 'CREATE_CAR', `Car ID: ${result[0].id}`);
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: 'Error creating car' });
@@ -139,6 +141,7 @@ export class CarController {
 
             carRepository.merge(car, req.body);
             const result = await carRepository.save(car);
+            await logUserAction((req as any).user, 'UPDATE_CAR', `Car ID: ${id}`);
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: 'Error updating car' });
@@ -164,6 +167,7 @@ export class CarController {
             }
 
             await carRepository.remove(car);
+            await logUserAction((req as any).user, 'DELETE_CAR', `Car ID: ${id}`);
             res.status(204).send();
         } catch (error) {
             res.status(500).json({ error: 'Error deleting car' });

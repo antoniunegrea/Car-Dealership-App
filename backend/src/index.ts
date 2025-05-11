@@ -9,9 +9,14 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { Car } from './model/Car';
+import authRoutes from './routes/authRoutes';
+import adminRoutes from './routes/adminRoutes';
+import { checkUserActions } from './utils/monitorUserActions';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const INTERVAL_MINUTES = 1 * 60 * 1000; // Y minutes
 
 // Middleware
 app.use(cors());
@@ -20,6 +25,8 @@ app.use(express.json());
 // Routes
 app.use('/api/cars', carRoutes);
 app.use('/api/dealerships', dealershipRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/health', (req, res) => {
     res.status(200).json({ status: 'OK' });
 });
@@ -135,3 +142,7 @@ AppDataSource.initialize()
     .catch((error) => {
         console.error('Error during Data Source initialization:', error);
     });
+
+    
+// Run every Y minutes
+setInterval(checkUserActions, INTERVAL_MINUTES);

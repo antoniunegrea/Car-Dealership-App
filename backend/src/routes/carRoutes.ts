@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+/*import express, { Request, Response } from 'express';
 import { Car } from '../model/Car';
 import { carSchema, carUpdateSchema } from '../validation/carValidation';
 import { SortField } from '../model/types';
@@ -101,3 +101,4 @@ router.get('/health', (req, res) => {
 
 
 export default router;
+*/

@@ -2,6 +2,8 @@ import { DataSource } from 'typeorm';
 import { Car } from '../model/Car';
 import { Dealership } from '../model/Dealership';
 import dotenv from 'dotenv';
+import User from '../model/User';
+import UserLog from '../model/UserLog';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -23,7 +25,7 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_NAME,
     synchronize: true, // Set to false in production
     logging: true,
-    entities: [Car, Dealership],
+    entities: [Car, Dealership, User, UserLog],
     subscribers: [],
     migrations: [],
 }); 

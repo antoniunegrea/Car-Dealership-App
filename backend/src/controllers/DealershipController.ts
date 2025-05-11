@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../config/database';
 import { Dealership } from '../model/Dealership';
 import { Like } from 'typeorm';
+import { logUserAction } from '../utils/logService';
 
 const dealershipRepository = AppDataSource.getRepository(Dealership);
 
@@ -11,6 +12,7 @@ export class DealershipController {
         try {
             const dealership = dealershipRepository.create(req.body);
             const result = await dealershipRepository.save(dealership);
+            await logUserAction((req as any).user, 'CREATE_DEALERSHIP', `Dealership ID: ${result[0].id}`);
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: 'Error creating dealership' });
@@ -83,6 +85,7 @@ export class DealershipController {
 
             dealershipRepository.merge(dealership, req.body);
             const result = await dealershipRepository.save(dealership);
+            await logUserAction((req as any).user, 'UPDATE_DEALERSHIP', `Dealership ID: ${id}`);
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: 'Error updating dealership' });
@@ -108,6 +111,7 @@ export class DealershipController {
             }
 
             await dealershipRepository.remove(dealership);
+            await logUserAction((req as any).user, 'DELETE_DEALERSHIP', `Dealership ID: ${id}`);
             res.status(204).send();
         } catch (error) {
             res.status(500).json({ error: 'Error deleting dealership' });

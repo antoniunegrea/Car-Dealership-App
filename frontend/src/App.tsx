@@ -15,6 +15,9 @@ import Dealership from './model/Dealership';
 import './App.css';
 import EditDealershipPage from './pages/EditDealershipPage';
 import AddDealershipPage from './pages/AddDealershipPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import AdminMonitoredUsers from './pages/AdminMonitoredUsers';
 type OperationType = 'add' | 'update' | 'delete';
 
 interface QueuedOperation {
@@ -38,6 +41,10 @@ function App() {
         // Load queued operations from localStorage on mount
         const saved = localStorage.getItem('queuedOperations');
         return saved ? JSON.parse(saved) : [];
+    });
+    const [auth, setAuth] = useState<{ token: string | null, user: any | null }>({
+        token: localStorage.getItem('token'),
+        user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
     });
 
     const serverService = new ServerService("http://localhost:3000/api");
@@ -286,31 +293,66 @@ function App() {
             window.alert('Failed to edit dealership. Please try again.' + error);
         }
     }
-    
-    
+
+    const handleLogin = (token: string, user: any) => {
+        setAuth({ token, user });
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+    };
+
+    const handleLogout = () => {
+        setAuth({ token: null, user: null });
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    };
+
     return (
         <BrowserRouter>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
+                {auth.user && (
+                    <>
+                        <span style={{ marginRight: 10 }}>Logged in as: {auth.user.username} ({auth.user.role})</span>
+                        <button onClick={handleLogout}>Logout</button>
+                    </>
+                )}
+            </div>
             <Routes>
+                <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+                <Route path="/register" element={<RegisterPage />} />
                 <Route
-                    path='/'
+                    path="/admin/monitored-users"
                     element={
-                        <Index
-                            cars={cars}
-                            handleDelete={handleDeleteCar}
-                            sortField={sortFieldCars}
-                            setSortField={setSortFieldCars}
-                            sortOrder={sortOrderCars}
-                            setSortOrder={setSortOrderCars}
-                            searchTerm={searchTermCars}
-                            setSearchTerm={handleSearchTermChange}
-                            isServerOnline={isServerOnline}
-                        />
+                        auth.token && auth.user && auth.user.role === 'admin' ? (
+                            <AdminMonitoredUsers />
+                        ) : (
+                            <div style={{ padding: 20 }}>Access denied. Admins only.</div>
+                        )
                     }
                 />
-                <Route path='/add' element={<AddCarPage onAddCar={handleAddCar} dealershipService={dealershipService}/>} />
-                <Route path="/edit/:id" element={<EditCarPage cars={cars} onEditCar={handleEditCar} dealershipService={dealershipService}/>} />
-                <Route path="/charts" element={<Charts cars={cars} />} />
-                <Route path="/files" element={<FileManagerPage />} />
+                <Route
+                    path="/"
+                    element={
+                        auth.token ? (
+                            <Index
+                                cars={cars}
+                                handleDelete={handleDeleteCar}
+                                sortField={sortFieldCars}
+                                setSortField={setSortFieldCars}
+                                sortOrder={sortOrderCars}
+                                setSortOrder={setSortOrderCars}
+                                searchTerm={searchTermCars}
+                                setSearchTerm={handleSearchTermChange}
+                                isServerOnline={isServerOnline}
+                            />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
+                <Route path="/add" element={auth.token ? <AddCarPage onAddCar={handleAddCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
+                <Route path="/edit/:id" element={auth.token ? <EditCarPage cars={cars} onEditCar={handleEditCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
+                <Route path="/charts" element={auth.token ? <Charts cars={cars} /> : <LoginPage onLogin={handleLogin} />} />
+                <Route path="/files" element={auth.token ? <FileManagerPage /> : <LoginPage onLogin={handleLogin} />} />
                 <Route path="/dealerships" element={<Dealerships dealerships={dealerships} handleDelete={handleDeleteDealership} sortField={sortFieldDealerships} setSortField={setSortFieldDealerships} sortOrder={sortOrderDealerships} setSortOrder={setSortOrderDealerships} searchTerm={searchTermDealerships} setSearchTerm={handleSearchTermChange} isServerOnline={isServerOnline}/>} />
                 <Route path="/add/dealership" element={<AddDealershipPage onAddDealership={handleAddDealership} dealershipService={dealershipService}/>} />
                 <Route path="/edit/dealership/:id" element={<EditDealershipPage dealerships={dealerships} onEditDealership={handleEditDealership}/>} />
