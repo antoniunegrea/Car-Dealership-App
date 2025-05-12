@@ -6,13 +6,13 @@ interface HeaderProps {
     setSearchTerm: (searchTerm: string) => void;
 }
 
-const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>{
+const HeaderComponentDealerships : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>{
     const navigate = useNavigate();
     
-    console.log("HeaderComponent rendered with searchTerm:", searchTerm);
+    console.log("HeaderComponentDealership rendered with searchTerm:", searchTerm);
 
     const handleAddButtonClick = () => {
-        navigate('/cars/add');
+        navigate('/dealerships/add');
     }
 
     const handleChartsButtonClick = () =>{
@@ -31,7 +31,7 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
     return (
         <div className="header">
             <div className="title">
-                Car Dealership
+                Dealerships
             </div>
             <div className="search-bar-container">
                 <input
@@ -41,7 +41,7 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
                 value={searchTerm}
                 onChange={handleSearchChange}
                 />
-                <button className='add-button' onClick={handleAddButtonClick}>Add Car</button>
+                <button className='add-button' onClick={handleAddButtonClick}>Add</button>
                 <button className='charts-button' onClick={handleChartsButtonClick}>Charts</button>
                 <button className='files-button' onClick={handleFilesButtonClick}>Files</button>
             </div>
@@ -51,4 +51,4 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
 
 };
 
-export default HeaderComponent;
+export default HeaderComponentDealerships;

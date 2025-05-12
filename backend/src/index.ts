@@ -12,11 +12,13 @@ import { Car } from './model/Car';
 import authRoutes from './routes/authRoutes';
 import adminRoutes from './routes/adminRoutes';
 import { checkUserActions } from './utils/monitorUserActions';
+import { startLoginGenerator } from './utils/activityGenerator';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const INTERVAL_MINUTES = 1 * 60 * 1000; // Y minutes
+
 
 // Middleware
 app.use(cors());
@@ -48,6 +50,8 @@ app.use('/api/stats', async (req, res) => {
   }
 });
 
+//start activity generator
+//startLoginGenerator();
 
 //run daemon thred to add random cars
 //runDaemonThread(app);

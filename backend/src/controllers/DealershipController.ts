@@ -12,10 +12,11 @@ export class DealershipController {
         try {
             const dealership = dealershipRepository.create(req.body);
             const result = await dealershipRepository.save(dealership);
-            await logUserAction((req as any).user, 'CREATE_DEALERSHIP', `Dealership ID: ${result[0].id}`);
+            await logUserAction((req as any).user, 'CREATE_DEALERSHIP', `Dealership ID: ${result[0]?.id}`);
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: 'Error creating dealership' });
+            console.log("Error creating dealership: "+ error);
         }
     }
 

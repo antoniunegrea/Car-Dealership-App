@@ -22,7 +22,6 @@ export class Car {
     @Column('decimal', { precision: 10, scale: 2 })
     price: number;
 
-    @Index()
     @Column({ nullable: true })
     image_url: string;
 
@@ -30,7 +29,6 @@ export class Car {
     @JoinColumn({ name: 'dealership_id' })
     dealership: Dealership;
 
-    @Index()
     @Column()
     dealership_id: number;
 } 

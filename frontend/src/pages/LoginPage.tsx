@@ -27,7 +27,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       onLogin(data.token, data.user);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/');
+      navigate('/dealerships');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     }

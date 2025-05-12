@@ -47,7 +47,7 @@ const DealershipListComponent:React.FC<DealershipListProps> = ({dealerships, onD
                 <p>Phone: {dealership.contact}</p>
             </div>  
             <div className="car-actions">
-                <button onClick={() => navigate(`/edit/dealership/${dealership.id}`)} className="edit-btn">Edit</button>
+                <button onClick={() => navigate(`/dealerships/edit/${dealership.id}`)} className="edit-btn">Edit</button>
                 <button onClick={() => handleDelete(dealership.id)} className="delete-btn">Delete</button>
             </div>
             </div>

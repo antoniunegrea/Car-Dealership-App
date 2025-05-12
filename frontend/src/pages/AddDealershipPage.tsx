@@ -19,7 +19,7 @@ const AddDealershipPage: React.FC<AddDealershipProps> = ({ onAddDealership, deal
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate('/');
+    navigate('/dealerships');
   }
 
   const handleSubmit = (e: React.FormEvent) => {

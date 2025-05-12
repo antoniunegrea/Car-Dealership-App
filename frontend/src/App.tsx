@@ -317,7 +317,7 @@ function App() {
                 )}
             </div>
             <Routes>
-                <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+                <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route
                     path="/admin/monitored-users"
@@ -330,7 +330,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/"
+                    path="/cars"
                     element={
                         auth.token ? (
                             <Index
@@ -349,13 +349,13 @@ function App() {
                         )
                     }
                 />
-                <Route path="/add" element={auth.token ? <AddCarPage onAddCar={handleAddCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/edit/:id" element={auth.token ? <EditCarPage cars={cars} onEditCar={handleEditCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/charts" element={auth.token ? <Charts cars={cars} /> : <LoginPage onLogin={handleLogin} />} />
+                <Route path="/cars/add" element={auth.token ? <AddCarPage onAddCar={handleAddCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
+                <Route path="/cars/edit/:id" element={auth.token ? <EditCarPage cars={cars} onEditCar={handleEditCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
+                <Route path="/charts" element={auth.token ? <Charts cars={cars} dealerships={dealerships} /> : <LoginPage onLogin={handleLogin} />} />
                 <Route path="/files" element={auth.token ? <FileManagerPage /> : <LoginPage onLogin={handleLogin} />} />
                 <Route path="/dealerships" element={<Dealerships dealerships={dealerships} handleDelete={handleDeleteDealership} sortField={sortFieldDealerships} setSortField={setSortFieldDealerships} sortOrder={sortOrderDealerships} setSortOrder={setSortOrderDealerships} searchTerm={searchTermDealerships} setSearchTerm={handleSearchTermChange} isServerOnline={isServerOnline}/>} />
-                <Route path="/add/dealership" element={<AddDealershipPage onAddDealership={handleAddDealership} dealershipService={dealershipService}/>} />
-                <Route path="/edit/dealership/:id" element={<EditDealershipPage dealerships={dealerships} onEditDealership={handleEditDealership}/>} />
+                <Route path="/dealerships/add" element={<AddDealershipPage onAddDealership={handleAddDealership} dealershipService={dealershipService}/>} />
+                <Route path="/dealerships/edit/:id" element={<EditDealershipPage dealerships={dealerships} onEditDealership={handleEditDealership}/>} />
                 <Route
                     path="*"
                     element={<div style={{ padding: 20 }}>404 - Page Not Found</div>}

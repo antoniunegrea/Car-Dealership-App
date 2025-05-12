@@ -4,6 +4,7 @@ import Dealership from '../model/Dealership'
 import {SortField, SortOrder} from '../model/Types'
 import SortingDealershipComponent from '../components/SortingDealershipComponent';
 import '../styles/index.css'
+import HeaderComponentDealerships from '../components/HeaderComponentDealerships';
 
 
 interface DealershipsProps{
@@ -22,7 +23,7 @@ interface DealershipsProps{
 const Index: React.FC<DealershipsProps> = ({ dealerships, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline}) => {
     return (
         <div className='components-container'>
-            <HeaderComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+            <HeaderComponentDealerships searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
             <div className='body-container'>
                 <div
                     className='server-status'

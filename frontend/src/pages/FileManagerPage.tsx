@@ -83,7 +83,7 @@ const FileManagerPage: React.FC = () => {
             {/* Header Section */}
             <div className="header-section">
                 <h2>File Manager</h2>
-                <button className="back-button" onClick={() => navigate('/')}>
+                <button className="back-button" onClick={() => navigate('/dealerships')}>
                     Go Back Home
                 </button>
             </div>
