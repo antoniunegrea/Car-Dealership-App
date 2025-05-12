@@ -12,7 +12,7 @@ export class CarController {
         try {
             const car = carRepository.create(req.body);
             const result = await carRepository.save(car);
-            await logUserAction((req as any).user, 'CREATE_CAR', `Car ID: ${result[0].id}`);
+            await logUserAction((req as any).user, 'CREATE_CAR', `Car ID: ${result[0]?.id}`);
             res.json(result);
         } catch (error) {
             res.status(500).json({ error: 'Error creating car' });

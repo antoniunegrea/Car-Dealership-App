@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Car from '../model/Car';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../styles/editCar.css'
+import '../styles/editCar.css';
 import DealershipService from '../service/dealershipService';
 import type Dealership from '../model/Dealership';
 
@@ -11,40 +11,67 @@ interface EditCarProps {
   dealershipService: DealershipService;
 }
 
-const EditCarPage: React.FC<EditCarProps> = ( {cars, onEditCar, dealershipService }) => {
-    const { id } = useParams<{ id?: string }>();
-    const carId = id ? parseInt(id) : 0;
-    const carToEdit = cars.filter((car)=> car.id === carId)[0];
-    const [manufacturer, setManufacturer] = useState(carToEdit.manufacturer);
-    const [model, setModel] = useState(carToEdit.model);
-    const [year, setYear] = useState<number>(Number(carToEdit.year));
-    const [price, setPrice] = useState<number>(Number(carToEdit.price));
-    const [imageUrl, setImageUrl] = useState<string>(carToEdit.image_url || '');
-    const [dealershipId, setDealershipId] = useState<number>(carToEdit.dealership_id);
-    const [dealerships, setDealerships] = useState<Dealership[]>([]);
+const EditCarPage: React.FC<EditCarProps> = ({ cars, onEditCar, dealershipService }) => {
+  const { id } = useParams<{ id?: string }>();
+  const carId = id ? parseInt(id) : 0;
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [carToEdit, setCarToEdit] = useState<Car | null>(null);
+  const [manufacturer, setManufacturer] = useState('');
+  const [model, setModel] = useState('');
+  const [year, setYear] = useState<number>(0);
+  const [price, setPrice] = useState<number>(0);
+  const [imageUrl, setImageUrl] = useState('');
+  const [dealershipId, setDealershipId] = useState<number>(0);
+  const [dealerships, setDealerships] = useState<Dealership[]>([]);
 
-    useEffect(() => {
-        const fetchDealerships = async () => {
-            try {
-                const data = await dealershipService.getAll();
-                setDealerships(data);
-            } catch (error) {
-                console.error('Failed to fetch dealerships:', error);
-            }
-        };
-        fetchDealerships();
-    }, []);
-
-    const handleGoBack = () => {
-        navigate('/cars');
+  useEffect(() => {
+    const selectedCar = cars.find((car) => car.id === carId);
+    if (selectedCar) {
+      setCarToEdit(selectedCar);
+      setManufacturer(selectedCar.manufacturer);
+      setModel(selectedCar.model);
+      setYear(Number(selectedCar.year));
+      setPrice(Number(selectedCar.price));
+      setImageUrl(selectedCar.image_url || '');
+      setDealershipId(selectedCar.dealership_id);
     }
+  }, [cars, carId]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onEditCar({id: carId, manufacturer,model,year,price,image_url: imageUrl,dealership_id: dealershipId});
+  useEffect(() => {
+    const fetchDealerships = async () => {
+      try {
+        const data = await dealershipService.getAll();
+        setDealerships(data);
+      } catch (error) {
+        console.error('Failed to fetch dealerships:', error);
+      }
     };
+    fetchDealerships();
+  }, [dealershipService]);
+
+  const handleGoBack = () => {
+    navigate('/cars');
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (carToEdit) {
+      onEditCar({
+        id: carToEdit.id,
+        manufacturer,
+        model,
+        year,
+        price,
+        image_url: imageUrl,
+        dealership_id: dealershipId
+      });
+    }
+  };
+
+  if (!carToEdit) {
+    return <div>Car not found</div>;
+  }
 
   return (
     <div className="edit-car-container">

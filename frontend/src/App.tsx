@@ -197,7 +197,13 @@ function App() {
 
         try {
             const addedCar = await carService.add(newCar);
-            setCars((prev) => [...prev, addedCar]);
+            //refresh the cars
+            carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
+                .then((data) => {
+                    console.log("Received cars data:", data);
+                    setCars(data);
+                })
+                .catch((error) => console.error('Failed to load cars:', error));
             window.alert('Car added successfully!');
         } catch (error) {
             console.error('Failed to add car:', error);
@@ -219,7 +225,14 @@ function App() {
 
         try {
             const updatedCar = await carService.update(car.id, car);
-            setCars((prev) => prev.map((c) => (c.id === car.id ? updatedCar : c)));
+            //setCars((prev) => prev.map((c) => (c.id === car.id ? updatedCar : c)));
+            //refresh the cars
+            carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
+                .then((data) => {
+                    console.log("Received cars data:", data);
+                    setCars(data);
+                })
+                .catch((error) => console.error('Failed to load cars:', error));
             window.alert('Car edited successfully!');
         } catch (error) {
             console.error('Failed to edit car:', error);
@@ -358,13 +371,101 @@ function App() {
                         )
                     }
                 />
-                <Route path="/cars/add" element={auth.token ? <AddCarPage onAddCar={handleAddCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/cars/edit/:id" element={auth.token ? <EditCarPage cars={cars} onEditCar={handleEditCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/charts" element={auth.token ? <Charts cars={cars} dealerships={dealerships} /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/files" element={auth.token ? <FileManagerPage /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/dealerships" element={<Dealerships dealerships={dealerships} handleDelete={handleDeleteDealership} sortField={sortFieldDealerships} setSortField={setSortFieldDealerships} sortOrder={sortOrderDealerships} setSortOrder={setSortOrderDealerships} searchTerm={searchTermDealerships} setSearchTerm={handleSearchTermDealershipsChange} isServerOnline={isServerOnline} selectedDealershipId={selectedDealershipId} setSelectedDealershipId={setSelectedDealershipId}/>} />
-                <Route path="/dealerships/add" element={<AddDealershipPage onAddDealership={handleAddDealership} dealershipService={dealershipService}/>} />
-                <Route path="/dealerships/edit/:id" element={<EditDealershipPage dealerships={dealerships} onEditDealership={handleEditDealership}/>} />
+                <Route
+                    path="/cars/add"
+                    element={
+                        auth.token ? (
+                            <AddCarPage
+                                onAddCar={handleAddCar}
+                                dealershipService={dealershipService}
+                            />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
+                <Route
+                    path="/cars/edit/:id"
+                    element={
+                        auth.token ? (
+                            <EditCarPage
+                                cars={cars}
+                                onEditCar={handleEditCar}
+                                dealershipService={dealershipService}
+                            />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
+                <Route
+                    path="/charts"
+                    element={
+                        auth.token ? (
+                            <Charts cars={cars} dealerships={dealerships} />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
+                <Route
+                    path="/files"
+                    element={
+                        auth.token ? (
+                            <FileManagerPage />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
+                <Route
+                    path="/dealerships"
+                    element={
+                        auth.token ? (
+                            <Dealerships
+                                dealerships={dealerships}
+                                handleDelete={handleDeleteDealership}
+                                sortField={sortFieldDealerships}
+                                setSortField={setSortFieldDealerships}
+                                sortOrder={sortOrderDealerships}
+                                setSortOrder={setSortOrderDealerships}
+                                searchTerm={searchTermDealerships}
+                                setSearchTerm={handleSearchTermDealershipsChange}
+                                isServerOnline={isServerOnline}
+                                selectedDealershipId={selectedDealershipId}
+                                setSelectedDealershipId={setSelectedDealershipId}
+                            />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
+                <Route
+                    path="/dealerships/add"
+                    element={
+                        auth.token ? (
+                            <AddDealershipPage
+                                onAddDealership={handleAddDealership}
+                                dealershipService={dealershipService}
+                            />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
+                <Route
+                    path="/dealerships/edit/:id"
+                    element={
+                        auth.token ? (
+                            <EditDealershipPage
+                                dealerships={dealerships}
+                                onEditDealership={handleEditDealership}
+                            />
+                        ) : (
+                            <LoginPage onLogin={handleLogin} />
+                        )
+                    }
+                />
                 <Route
                     path="*"
                     element={<div style={{ padding: 20 }}>404 - Page Not Found</div>}

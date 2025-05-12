@@ -42,31 +42,22 @@ class CarService{
             throw error;
         }
     }
-/*
-    async getCarById(params?: {id?: number}):Promise<Car>{
-        try {
-            let url = this.baseUrl;
-            if (params) {
-                const query = new URLSearchParams();
-                if (params.id) query.append('id', String(params.id));
-                url += `?${query.toString()}`;
-            }
-            const response = await fetch(url, {
-                method: 'GET',
-            });
 
+    //get by id car
+    async getById(id: number): Promise<Car> {
+        try {
+            const response = await fetch(`${this.baseUrl}/${id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
             const data: Car = await response.json();
             return data;
         } catch (error) {
-            console.error('Error fetching car with given id:', error);
+            console.error('Error fetching car by id:', error);
             throw error;
         }
     }
-*/
+
     async add(newCar: Omit<Car, 'id'>): Promise<Car> {
         try {
             const response = await fetch(this.baseUrl, {
