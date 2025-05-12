@@ -17,10 +17,12 @@ interface DealershipsProps{
     searchTerm: string;
     setSearchTerm: (searchTerm: string) => void;
     isServerOnline: boolean;
+    selectedDealershipId: number | null;
+    setSelectedDealershipId: (dealershipId: number | null) => void;
 }
 
 
-const Index: React.FC<DealershipsProps> = ({ dealerships, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline}) => {
+const Index: React.FC<DealershipsProps> = ({ dealerships, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline, selectedDealershipId, setSelectedDealershipId}) => {
     return (
         <div className='components-container'>
             <HeaderComponentDealerships searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
@@ -48,7 +50,7 @@ const Index: React.FC<DealershipsProps> = ({ dealerships, handleDelete, sortFiel
                     setSortOrder(order);
                     }}
                 />
-                <DealershipListComponent dealerships={dealerships} onDelete={handleDelete}/>
+                <DealershipListComponent dealerships={dealerships} onDelete={handleDelete} selectedDealershipId={selectedDealershipId} setSelectedDealershipId={setSelectedDealershipId}/>
             </div>
         </div>
     );

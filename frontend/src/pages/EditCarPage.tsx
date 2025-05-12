@@ -38,7 +38,7 @@ const EditCarPage: React.FC<EditCarProps> = ( {cars, onEditCar, dealershipServic
     }, []);
 
     const handleGoBack = () => {
-        navigate('/');
+        navigate('/cars');
     }
 
     const handleSubmit = (e: React.FormEvent) => {

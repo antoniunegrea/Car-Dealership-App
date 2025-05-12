@@ -11,6 +11,8 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
     
     console.log("HeaderComponent rendered with searchTerm:", searchTerm);
 
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
+
     const handleAddButtonClick = () => {
         navigate('/cars/add');
     }
@@ -28,6 +30,10 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
         setSearchTerm(e.target.value);
     };
 
+    const handleDealershipsButtonClick = () =>{
+        navigate('/dealerships');
+    }
+
     return (
         <div className="header">
             <div className="title">
@@ -44,6 +50,10 @@ const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>
                 <button className='add-button' onClick={handleAddButtonClick}>Add Car</button>
                 <button className='charts-button' onClick={handleChartsButtonClick}>Charts</button>
                 <button className='files-button' onClick={handleFilesButtonClick}>Files</button>
+                <button className='dealerships-button' onClick={handleDealershipsButtonClick}>Dealerships</button>
+                {user && user.role === 'admin' && (
+                    <button className='admin-dashboard-button' onClick={() => navigate('/admin/monitored-users')}>Dashboard</button>
+                )}
             </div>
             
         </div>

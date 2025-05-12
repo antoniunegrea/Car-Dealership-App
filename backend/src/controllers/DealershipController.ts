@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { AppDataSource } from '../config/database';
 import { Dealership } from '../model/Dealership';
-import { Like } from 'typeorm';
+import { ILike } from 'typeorm';
 import { logUserAction } from '../utils/logService';
 
 const dealershipRepository = AppDataSource.getRepository(Dealership);
@@ -23,23 +23,32 @@ export class DealershipController {
     // Get all dealerships with filtering
     getAll = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { name, location, sortBy = 'id', order = 'ASC' } = req.query;
+            const { searchTerm, sortBy, order, selectedDealershipId } = req.query;
 
-            const where: any = {};
-            if (name) where.name = Like(`%${name}%`);
-            if (location) where.location = Like(`%${location}%`);
+            const where: any[] = [];
+
+            if (searchTerm) {
+                where.push({
+                    name: ILike(`%${searchTerm}%`)
+                });
+                where.push({
+                    location: ILike(`%${searchTerm}%`)
+                });
+            }
 
             const dealerships = await dealershipRepository.find({
-                where,
+                where: searchTerm ? where : {},
                 order: { [sortBy as string]: order },
                 relations: ['cars']
             });
 
             res.json(dealerships);
         } catch (error) {
+            console.error('Error fetching dealerships:', error);
             res.status(500).json({ error: 'Error fetching dealerships' });
         }
-    }
+    };
+
 
     // Get a single dealership by ID
     getOne = async (req: Request, res: Response): Promise<void> => {

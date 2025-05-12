@@ -11,6 +11,8 @@ const HeaderComponentDealerships : React.FC<HeaderProps> = ({searchTerm, setSear
     
     console.log("HeaderComponentDealership rendered with searchTerm:", searchTerm);
 
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
+
     const handleAddButtonClick = () => {
         navigate('/dealerships/add');
     }
@@ -28,6 +30,10 @@ const HeaderComponentDealerships : React.FC<HeaderProps> = ({searchTerm, setSear
         setSearchTerm(e.target.value);
     };
 
+    const handleCarsButtonClick = () =>{
+        navigate('/cars');
+    }
+
     return (
         <div className="header">
             <div className="title">
@@ -44,6 +50,10 @@ const HeaderComponentDealerships : React.FC<HeaderProps> = ({searchTerm, setSear
                 <button className='add-button' onClick={handleAddButtonClick}>Add</button>
                 <button className='charts-button' onClick={handleChartsButtonClick}>Charts</button>
                 <button className='files-button' onClick={handleFilesButtonClick}>Files</button>
+                <button className='cars-button' onClick={handleCarsButtonClick}>Cars</button>
+                {user && user.role === 'admin' && (
+                    <button className='admin-dashboard-button' onClick={() => navigate('/admin/monitored-users')}>Dashboard</button>
+                )}
             </div>
             
         </div>

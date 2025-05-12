@@ -35,7 +35,7 @@ const AddCarPage: React.FC<AddCarProps> = ({ onAddCar, dealershipService }) => {
   }, []);
 
   const handleGoBack = () => {
-    navigate('/');
+    navigate('/cars');
   }
 
   const handleSubmit = (e: React.FormEvent) => {

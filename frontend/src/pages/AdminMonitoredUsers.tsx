@@ -57,7 +57,7 @@ const AdminMonitoredUsers: React.FC = () => {
           ))}
         </tbody>
       </table>
-      <button style={{ marginTop: 24, padding: '8px 24px', borderRadius: 4, background: '#1976d2', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/')}>Back to Home</button>
+      <button style={{ marginTop: 24, padding: '8px 24px', borderRadius: 4, background: '#1976d2', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/dealerships')}>Back to Home</button>
     </div>
   );
 };

@@ -25,76 +25,53 @@ export class CarController {
             const {
                 manufacturer,
                 model,
-                minYear,
-                maxYear,
-                minPrice,
-                maxPrice,
-                dealership_id,
                 searchTerm,
                 sortBy = 'id',
-                order = 'ASC'
+                order = 'ASC',
+                selectedDealershipId
             } = req.query;
 
-            const where: FindOptionsWhere<Car> = {};
+            const validSortFields = ['manufacturer', 'model', 'year', 'price', 'id'];
+            const sortField = validSortFields.includes(String(sortBy)) ? String(sortBy) : 'id';
+            const sortOrder = ['ASC', 'DESC'].includes(String(order).toUpperCase()) ? String(order).toUpperCase() : 'ASC';
+
+            const query = carRepository
+                .createQueryBuilder('car')
+                .leftJoinAndSelect('car.dealership', 'dealership');
 
             if (searchTerm) {
                 const search = `%${searchTerm}%`;
-                // Only allow sorting by specific fields
-                const validSortFields = ['manufacturer', 'model', 'year', 'price', 'id'];
-                const sortField = validSortFields.includes(String(sortBy)) ? String(sortBy) : 'id';
-                const sortOrder = (order === 'ASC' || order === 'DESC' || order === 'asc' || order === 'desc') ? order.toUpperCase() : 'ASC';
-
-                console.log('QueryBuilder search:', { sortField, sortOrder });
-
-                const cars = await carRepository
-                    .createQueryBuilder('car')
-                    .where('LOWER(car.manufacturer) LIKE LOWER(:search)', { search })
-                    .orWhere('LOWER(car.model) LIKE LOWER(:search)', { search })
-                    .orWhere('car.year::text LIKE :search', { search })
-                    .orWhere('car.price::text LIKE :search', { search })
-                    .orderBy(`car.${sortField}`, sortOrder as 'ASC' | 'DESC')
-                    .getMany();
-                
-                res.json(cars);
-                return;
+                query.andWhere(
+                    `(LOWER(car.manufacturer) LIKE LOWER(:search)
+                    OR LOWER(car.model) LIKE LOWER(:search)
+                    OR CAST(car.year AS TEXT) LIKE :search
+                    OR CAST(car.price AS TEXT) LIKE :search)`,
+                    { search }
+                );
             }
 
-            if (manufacturer) where.manufacturer = Like(`%${manufacturer}%`);
-            if (model) where.model = Like(`%${model}%`);
-            if (dealership_id) {
-                const dealershipId = Number(dealership_id);
-                if (!isNaN(dealershipId)) {
-                    where.dealership_id = dealershipId;
-                }
-            }
-            
-            if (minYear || maxYear) {
-                const min = minYear ? Number(minYear) : 1900;
-                const max = maxYear ? Number(maxYear) : new Date().getFullYear();
-                if (!isNaN(min) && !isNaN(max)) {
-                    where.year = Between(min, max);
-                }
+            if (manufacturer) {
+                query.andWhere('LOWER(car.manufacturer) LIKE LOWER(:manufacturer)', { manufacturer: `%${manufacturer}%` });
             }
 
-            if (minPrice || maxPrice) {
-                const min = minPrice ? Number(minPrice) : 0;
-                const max = maxPrice ? Number(maxPrice) : Number.MAX_SAFE_INTEGER;
-                if (!isNaN(min) && !isNaN(max)) {
-                    where.price = Between(min, max);
-                }
+            if (model) {
+                query.andWhere('LOWER(car.model) LIKE LOWER(:model)', { model: `%${model}%` });
             }
 
-            const cars = await carRepository.find({
-                where,
-                order: { [sortBy as string]: order },
-                relations: ['dealership']
-            });
+            if (selectedDealershipId && !isNaN(Number(selectedDealershipId))) {
+                query.andWhere('car.dealership_id = :dealershipId', { dealershipId: Number(selectedDealershipId) });
+            }
+
+            query.orderBy(`car.${sortField}`, sortOrder as 'ASC' | 'DESC');
+
+            const cars = await query.getMany();
 
             res.json(cars);
         } catch (error) {
+            console.error('Error fetching cars:', error);
             res.status(500).json({ error: 'Error fetching cars' });
         }
-    }
+    };
 
     // Get a single car by ID
     getOne = async (req: Request, res: Response): Promise<void> => {

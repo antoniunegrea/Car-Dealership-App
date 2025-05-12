@@ -13,7 +13,7 @@ import authRoutes from './routes/authRoutes';
 import adminRoutes from './routes/adminRoutes';
 import { checkUserActions } from './utils/monitorUserActions';
 import { startLoginGenerator } from './utils/activityGenerator';
-
+import seedCars from './seeds/seedCars';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -49,6 +49,9 @@ app.use('/api/stats', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
+//seed cars
+//seedCars();
 
 //start activity generator
 //startLoginGenerator();

@@ -7,9 +7,11 @@ import CarListComponent from './CarListComponent';
 interface DealershipListProps {
     dealerships: Dealership[];
     onDelete: (dealershipId: number) => void;
+    selectedDealershipId: number | null;
+    setSelectedDealershipId: (dealershipId: number | null) => void;
 }
 
-const DealershipListComponent:React.FC<DealershipListProps> = ({dealerships, onDelete}) => {
+const DealershipListComponent:React.FC<DealershipListProps> = ({dealerships, onDelete, selectedDealershipId, setSelectedDealershipId}) => {
     const navigate = useNavigate();
 
     const [visibleCount, setVisibleCount] = useState(10);
@@ -37,12 +39,20 @@ const DealershipListComponent:React.FC<DealershipListProps> = ({dealerships, onD
       }
     }
 
+    const handleDealershipClick = (dealershipId: number) => {
+        setSelectedDealershipId(dealershipId);
+        navigate('/cars');
+    }
+
     return (
         <div className="dealership-list">
         {displayedDealerships.map((dealership) => (
             <div key={dealership.id} className="dealership-item">
             <div className="dealership-info">
-                <h3>{dealership.name}</h3>
+                <h3 style={{ cursor: 'pointer', color: '#1976d2', textDecoration: 'underline' }}
+                    onClick={() => handleDealershipClick(dealership.id)}>
+                    {dealership.name}
+                </h3>
                 <p>Address: {dealership.location}</p>
                 <p>Phone: {dealership.contact}</p>
             </div>  

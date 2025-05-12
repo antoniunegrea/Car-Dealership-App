@@ -9,7 +9,7 @@ class CarService{
         this.baseUrl=url;
     }
 
-    async get(params?: { searchTerm?: string; sortBy?: SortField; order?: SortOrder }): Promise<Car[]> {
+    async get(params?: { searchTerm?: string; sortBy?: SortField; order?: SortOrder; selectedDealershipId?: number }): Promise<Car[]> {
         try {
             let url = this.baseUrl;
             if (params) {
@@ -17,12 +17,14 @@ class CarService{
                 if (params.searchTerm) query.append('searchTerm', params.searchTerm);
                 if (params.sortBy) query.append('sortBy', params.sortBy);
                 if (params.order) query.append('order', params.order);
+                if (params.selectedDealershipId) query.append('selectedDealershipId', params.selectedDealershipId.toString());
                 url += `?${query.toString()}`;
             }
             console.log("Making request to URL:", url);
             console.log("Search term:", params?.searchTerm);
             console.log("Sort by:", params?.sortBy);
             console.log("Order:", params?.order);
+            console.log("Selected dealership ID:", params?.selectedDealershipId);
             
             const response = await fetch(url, {
                 method: 'GET',

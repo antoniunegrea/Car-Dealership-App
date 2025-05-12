@@ -35,6 +35,7 @@ function App() {
     const [sortOrderDealerships, setSortOrderDealerships] = useState<SortOrder>('asc');
     const [searchTermCars, setSearchTermCars] = useState('');
     const [searchTermDealerships, setSearchTermDealerships] = useState('');
+    const [selectedDealershipId, setSelectedDealershipId] = useState<number | null>(null);
     const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [queuedOperations, setQueuedOperations] = useState<QueuedOperation[]>(() => {
@@ -121,9 +122,14 @@ function App() {
     }, [isServerOnline, queuedOperations]);
 
     // Add a wrapper for setSearchTerm to log changes
-    const handleSearchTermChange = (newSearchTerm: string) => {
+    const handleSearchTermCarsChange = (newSearchTerm: string) => {
         console.log("Search term changing to:", newSearchTerm);
         setSearchTermCars(newSearchTerm);
+    };
+
+    const handleSearchTermDealershipsChange = (newSearchTerm: string) => {
+        console.log("Search term changing to:", newSearchTerm);
+        setSearchTermDealerships(newSearchTerm);
     };
 
     // Fetch cars via HTTP (initial load or fallback)
@@ -131,20 +137,20 @@ function App() {
         console.log("Effect triggered with searchTerm:", searchTermCars);
         if (isServerOnline) {
             console.log("Server is online, making request");
-            carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars })
+            carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
                 .then((data) => {
                     console.log("Received cars data:", data);
                     setCars(data);
                 })
                 .catch((error) => console.error('Failed to load cars:', error));
-            dealershipService.getAll({ searchTerm: searchTermDealerships, sortBy: sortFieldDealerships, order: sortOrderDealerships })
+            dealershipService.getAll({ searchTerm: searchTermDealerships, sortBy: sortFieldDealerships, order: sortOrderDealerships})
                 .then((data) => {
                     console.log("Received dealerships data:", data);
                     setDealerships(data);
                 })
                 .catch((error) => console.error('Failed to load dealerships:', error));
         }
-    }, [searchTermCars, sortFieldCars, sortOrderCars, searchTermDealerships, sortFieldDealerships, sortOrderDealerships, isServerOnline]);
+    }, [searchTermCars, sortFieldCars, sortOrderCars, searchTermDealerships, sortFieldDealerships, sortOrderDealerships, isServerOnline, selectedDealershipId]);
 
     // Sync queued operations with the server
     const syncQueuedOperations = async () => {
@@ -304,16 +310,19 @@ function App() {
         setAuth({ token: null, user: null });
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        window.location.href = '/';
     };
 
     return (
         <BrowserRouter>
             <div style={{ display: 'flex', justifyContent: 'flex-end', padding: 10 }}>
-                {auth.user && (
+                {auth.user ? (
                     <>
                         <span style={{ marginRight: 10 }}>Logged in as: {auth.user.username} ({auth.user.role})</span>
                         <button onClick={handleLogout}>Logout</button>
                     </>
+                ) : (
+                    <span style={{ color: '#888' }}>Not logged in</span>
                 )}
             </div>
             <Routes>
@@ -341,7 +350,7 @@ function App() {
                                 sortOrder={sortOrderCars}
                                 setSortOrder={setSortOrderCars}
                                 searchTerm={searchTermCars}
-                                setSearchTerm={handleSearchTermChange}
+                                setSearchTerm={handleSearchTermCarsChange}
                                 isServerOnline={isServerOnline}
                             />
                         ) : (
@@ -353,7 +362,7 @@ function App() {
                 <Route path="/cars/edit/:id" element={auth.token ? <EditCarPage cars={cars} onEditCar={handleEditCar} dealershipService={dealershipService} /> : <LoginPage onLogin={handleLogin} />} />
                 <Route path="/charts" element={auth.token ? <Charts cars={cars} dealerships={dealerships} /> : <LoginPage onLogin={handleLogin} />} />
                 <Route path="/files" element={auth.token ? <FileManagerPage /> : <LoginPage onLogin={handleLogin} />} />
-                <Route path="/dealerships" element={<Dealerships dealerships={dealerships} handleDelete={handleDeleteDealership} sortField={sortFieldDealerships} setSortField={setSortFieldDealerships} sortOrder={sortOrderDealerships} setSortOrder={setSortOrderDealerships} searchTerm={searchTermDealerships} setSearchTerm={handleSearchTermChange} isServerOnline={isServerOnline}/>} />
+                <Route path="/dealerships" element={<Dealerships dealerships={dealerships} handleDelete={handleDeleteDealership} sortField={sortFieldDealerships} setSortField={setSortFieldDealerships} sortOrder={sortOrderDealerships} setSortOrder={setSortOrderDealerships} searchTerm={searchTermDealerships} setSearchTerm={handleSearchTermDealershipsChange} isServerOnline={isServerOnline} selectedDealershipId={selectedDealershipId} setSelectedDealershipId={setSelectedDealershipId}/>} />
                 <Route path="/dealerships/add" element={<AddDealershipPage onAddDealership={handleAddDealership} dealershipService={dealershipService}/>} />
                 <Route path="/dealerships/edit/:id" element={<EditDealershipPage dealerships={dealerships} onEditDealership={handleEditDealership}/>} />
                 <Route

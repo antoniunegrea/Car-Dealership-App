@@ -1,4 +1,4 @@
-import { SortOrder } from '../model/Types';
+import { SortField, SortOrder } from '../model/Types';
 import Dealership from '../model/Dealership';
 
 class DealershipService {
@@ -8,7 +8,7 @@ class DealershipService {
         this.baseUrl = url;
     }
 
-    async getAll(params?: { searchTerm?: string; sortBy?: string; order?: SortOrder }): Promise<Dealership[]> {
+    async getAll(params?: { searchTerm?: string; sortBy?: SortField; order?: SortOrder;}): Promise<Dealership[]> {
         try {
             let url = this.baseUrl;
             if (params) {

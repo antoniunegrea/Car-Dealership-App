@@ -3,13 +3,16 @@ import { AppDataSource } from '../config/database';
 import { Car } from '../model/Car';
 import { faker } from '@faker-js/faker';
 
-async function seedCars() {
+export default async function seedCars() {
   try {
     await AppDataSource.initialize();
     const carRepository = AppDataSource.getRepository(Car);
 
-    const BATCH_SIZE = 1000;
-    const TOTAL_CARS = 100_000;
+    //delete all cars
+    await carRepository.clear();
+
+    const BATCH_SIZE = 10;
+    const TOTAL_CARS = 100;
 
     for (let i = 0; i < TOTAL_CARS / BATCH_SIZE; i++) {
       const cars: Car[] = [];
@@ -21,6 +24,7 @@ async function seedCars() {
         car.year = faker.number.int({ min: 1990, max: 2024 });
         car.price = faker.number.int({ min: 5000, max: 100000 });
         car.dealership_id = faker.number.int({ min: 1, max: 2 });
+        car.image_url = "https://i.ytimg.com/vi/PAQhcKG9D6c/maxresdefault.jpg"
         cars.push(car);
       }
 
@@ -36,4 +40,3 @@ async function seedCars() {
   }
 }
 
-seedCars();
