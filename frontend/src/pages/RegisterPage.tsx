@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles/register.css'
 
 const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -46,7 +47,7 @@ const RegisterPage: React.FC = () => {
         </select>
         <button type="submit">Register</button>
         <div style={{ marginTop: 10 }}>
-          Already have an account? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => navigate('/login')}>Login</span>
+          Already have an account? <span style={{ color: 'blue', cursor: 'pointer' }} onClick={() => navigate('/')}>Login</span>
         </div>
       </form>
     </div>

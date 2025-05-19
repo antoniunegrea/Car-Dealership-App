@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles/login.css';
 
 interface LoginPageProps {
   onLogin: (token: string, user: { id: number; username: string; role: string }) => void;
