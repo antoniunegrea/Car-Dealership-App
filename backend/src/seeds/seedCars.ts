@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { AppDataSource } from '../config/database';
+import AppDataSource from '../config/database';
 import { Car } from '../model/Car';
 import { faker } from '@faker-js/faker';
 
