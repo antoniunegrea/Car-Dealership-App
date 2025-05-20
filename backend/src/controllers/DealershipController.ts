@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AppDataSource } from '../config/database';
+import AppDataSource from '../config/database';
 import { Dealership } from '../model/Dealership';
 import { ILike } from 'typeorm';
 import { logUserAction } from '../utils/logService';

@@ -3,8 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 interface MonitoredUser {
   id: number;
-  username: string;
-  actionCount: number;
+  user: {
+    id: number;
+    username: string;
+  };
+  flagged: boolean;
+  actionCount: number | null;
+  lastChecked: string;
 }
 
 const AdminMonitoredUsers: React.FC = () => {
@@ -35,7 +40,7 @@ const AdminMonitoredUsers: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #ccc', padding: 32 }}>
+    <div style={{ maxWidth: 900, margin: '40px auto', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #ccc', padding: 32 }}>
       <h2 style={{ textAlign: 'center', marginBottom: 24 }}>Monitored Users Dashboard</h2>
       {loading && <div>Loading...</div>}
       {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
@@ -45,19 +50,48 @@ const AdminMonitoredUsers: React.FC = () => {
             <th style={{ padding: 12, border: '1px solid #eee' }}>User ID</th>
             <th style={{ padding: 12, border: '1px solid #eee' }}>Username</th>
             <th style={{ padding: 12, border: '1px solid #eee' }}>Action Count</th>
+            <th style={{ padding: 12, border: '1px solid #eee' }}>Status</th>
+            <th style={{ padding: 12, border: '1px solid #eee' }}>Last Checked</th>
           </tr>
         </thead>
         <tbody>
           {users.map(user => (
             <tr key={user.id} style={{ textAlign: 'center' }}>
-              <td style={{ padding: 10, border: '1px solid #eee' }}>{user.id}</td>
-              <td style={{ padding: 10, border: '1px solid #eee' }}>{user.username}</td>
-              <td style={{ padding: 10, border: '1px solid #eee' }}>{user.actionCount}</td>
+              <td style={{ padding: 10, border: '1px solid #eee' }}>{user.user.id}</td>
+              <td style={{ padding: 10, border: '1px solid #eee' }}>{user.user.username}</td>
+              <td style={{ padding: 10, border: '1px solid #eee' }}>{user.actionCount || 0}</td>
+              <td style={{ padding: 10, border: '1px solid #eee' }}>
+                <span style={{ 
+                  padding: '4px 8px', 
+                  borderRadius: '4px',
+                  backgroundColor: user.flagged ? '#ffebee' : '#e8f5e9',
+                  color: user.flagged ? '#c62828' : '#2e7d32'
+                }}>
+                  {user.flagged ? 'Flagged' : 'Normal'}
+                </span>
+              </td>
+              <td style={{ padding: 10, border: '1px solid #eee' }}>
+                {new Date(user.lastChecked).toLocaleString()}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <button style={{ marginTop: 24, padding: '8px 24px', borderRadius: 4, background: '#1976d2', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigate('/dealerships')}>Back to Home</button>
+      <button 
+        style={{ 
+          marginTop: 24, 
+          padding: '8px 24px', 
+          borderRadius: 4, 
+          background: '#1976d2', 
+          color: '#fff', 
+          border: 'none', 
+          fontWeight: 'bold', 
+          cursor: 'pointer' 
+        }} 
+        onClick={() => navigate('/dealerships')}
+      >
+        Back to Home
+      </button>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { WebSocketServer, WebSocket } from 'ws';
+/*import { WebSocketServer, WebSocket } from 'ws';
 import http from 'http';
 import { cars } from '../routes/carRoutes';
 import express from 'express';
@@ -40,4 +40,4 @@ const runDaemonThread = (app: Express.Application) =>{
     }, 3000);
 }
 
-export default runDaemonThread;
+export default runDaemonThread;*/

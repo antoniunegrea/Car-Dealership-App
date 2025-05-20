@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { AppDataSource } from '../config/database';
+import AppDataSource from '../config/database';
 import { Car } from '../model/Car';
 import { Like, Between, FindOptionsWhere } from 'typeorm';
 import { logUserAction } from '../utils/logService';

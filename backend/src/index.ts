@@ -1,23 +1,23 @@
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
-import { AppDataSource } from './config/database';
+import AppDataSource from './config/database';
 import carRoutes from './routes/car.routes';
 import dealershipRoutes from './routes/dealership.routes';
-import runDaemonThread from './utils/daemonThread';
+//import runDaemonThread from './utils/daemonThread';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { Car } from './model/Car';
-import authRoutes from './routes/authRoutes';
-import adminRoutes from './routes/adminRoutes';
+import authRoutes from './routes/auth.routes';
+import adminRoutes from './routes/admin.routes';
 import { checkUserActions } from './utils/monitorUserActions';
 import { startLoginGenerator } from './utils/activityGenerator';
-import seedCars from './seeds/seedCars';
+//import seedCars from './seeds/seedCars';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const INTERVAL_MINUTES = 1 * 60 * 1000; // Y minutes
+const INTERVAL_MINUTES = 3 * 60 * 1000; // Y minutes
 
 
 // Middleware

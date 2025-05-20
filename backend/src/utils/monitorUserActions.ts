@@ -1,13 +1,15 @@
-import { AppDataSource } from '../config/database';
+import AppDataSource from '../config/database';
 import UserLog from '../model/UserLog';
 import User from '../model/User';
+import UserMonitoring from '../model/UserMonitoring';
 
-const ACTION_LIMIT = 3; // X actions
-const INTERVAL_MINUTES = 5 * 60 * 1000; // 100 * 60,000ms = 5 minutes
+const ACTION_LIMIT = 9; // X actions
+const INTERVAL_MINUTES = 3 * 60 * 1000; // 100 * 60,000ms = 5 minutes
 
 export async function checkUserActions() {
     const userLogRepo = AppDataSource.getRepository(UserLog);
     const userRepo = AppDataSource.getRepository(User);
+    const userMonitoringRepo = AppDataSource.getRepository(UserMonitoring);
 
     console.log('Checking user actions...');
 
@@ -17,7 +19,6 @@ export async function checkUserActions() {
         .createQueryBuilder('log')
         .leftJoinAndSelect('log.user', 'user')
         .where('log.timestamp > :since', { since })
-        .andWhere('user.flagged = :flagged', { flagged: false })
         .andWhere('user.role = :role', { role: 'user' })
         .getMany();
 
@@ -29,12 +30,16 @@ export async function checkUserActions() {
     });
 
     for (const userId in actionCounts) {
-        if (actionCounts[userId] > 3) {
+        if (actionCounts[userId] > ACTION_LIMIT) {
             const user = await userRepo.findOne({ where: { id: Number(userId) } });
             if (user) {
                 console.log(`User ${user.username} (ID: ${userId}) exceeded action limit with ${actionCounts[userId]} actions.`);
-                user.flagged = true;
-                await userRepo.save(user); // Optionally flag the user
+                // add user to the UserMonitoring table
+                const userMonitoring = new UserMonitoring();
+                userMonitoring.user = user;
+                userMonitoring.actionCount = actionCounts[userId];
+                userMonitoring.flagged = true;
+                await userMonitoringRepo.save(userMonitoring);
             }
         }
     }

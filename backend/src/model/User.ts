@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import UserMonitoring from './UserMonitoring'; // import the new entity
 
 @Entity('users')
 export default class User {
@@ -12,8 +13,8 @@ export default class User {
     password: string;
 
     @Column({ default: 'user' })
-    role: string; // e.g., 'user', 'admin'
+    role: string;
 
-    @Column({ default: false })
-    flagged: boolean;
-} 
+    @OneToOne(() => UserMonitoring, monitoring => monitoring.user)
+    monitoring: UserMonitoring;
+}

@@ -1,6 +1,6 @@
 // backend/src/controllers/AuthController.ts
 import { Request, Response } from 'express';
-import { AppDataSource } from '../config/database';
+import AppDataSource from '../config/database';
 import User from '../model/User';
 import jwt from 'jsonwebtoken';
 import { logUserAction } from '../utils/logService';

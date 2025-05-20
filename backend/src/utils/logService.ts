@@ -1,5 +1,5 @@
 // backend/src/utils/logService.ts
-import { AppDataSource } from '../config/database';
+import AppDataSource from '../config/database';
 import UserLog from '../model/UserLog';
 import User from '../model/User';
 

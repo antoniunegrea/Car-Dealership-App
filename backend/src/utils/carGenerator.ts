@@ -1,4 +1,4 @@
-import Car from "../model/car";
+/*import Car from "../model/car";
 
 // Function to generate a random car
 const manufacturers = ['Honda', 'Chevrolet', 'Hyundai', 'Kia', 'Mazda'];
@@ -14,4 +14,4 @@ const generateRandomCar = (id: number): Car => ({
     image_url: `https://example.com/images/${id}.jpg`,
 });
 
-export default generateRandomCar;
+export default generateRandomCar;*/
