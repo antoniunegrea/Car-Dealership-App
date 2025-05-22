@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useMemo} from 'react';
+//import { useCallback, useRef } from 'react';
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Index from './pages/Index';
 import AddCarPage from './pages/AddCarPage';
@@ -7,7 +8,7 @@ import Charts from './pages/Charts';
 import FileManagerPage from './pages/FileManagerPage';
 import Car from './model/Car';
 import CarService from './service/carService';
-import ServerService from './service/serverService'
+//import ServerService from './service/serverService'
 import DealershipService from './service/dealershipService';
 import { SortField, SortOrder } from './model/Types';
 import Dealerships from './pages/Dealerships';
@@ -37,8 +38,9 @@ function App() {
     const [searchTermCars, setSearchTermCars] = useState('');
     const [searchTermDealerships, setSearchTermDealerships] = useState('');
     const [selectedDealershipId, setSelectedDealershipId] = useState<number | null>(null);
-    const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
-    const wsRef = useRef<WebSocket | null>(null);
+    //const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
+    const isServerOnline = true;
+    //const wsRef = useRef<WebSocket | null>(null);
     const [queuedOperations, setQueuedOperations] = useState<QueuedOperation[]>(() => {
         // Load queued operations from localStorage on mount
         const saved = localStorage.getItem('queuedOperations');
@@ -53,7 +55,7 @@ function App() {
     const dealershipService = new DealershipService("http://localhost:3000/api/dealerships");
     const carService = new CarService("http://localhost:3000/api/cars");
     */
-    const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
+    //const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
     const dealershipService = useMemo(() => new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships"), []);
     const carService = useMemo(() => new CarService("https://car-dealership-app-production.up.railway.app/api/cars"), []);
    
@@ -182,7 +184,7 @@ function App() {
     */
 
     // Sync queued operations with the server
-    const syncQueuedOperations = useCallback(async () => {
+    /*const syncQueuedOperations = useCallback(async () => {
         const operations = [...queuedOperations].sort((a, b) => a.timestamp - b.timestamp);
         for (const operation of operations) {
             try {
@@ -206,7 +208,7 @@ function App() {
         }
         setQueuedOperations([]);
         localStorage.removeItem('queuedOperations');
-    }, [queuedOperations, carService]); // Add dependencies here
+    }, [queuedOperations, carService]); */ // Add dependencies here
 
     const handleAddCar = async (newCar: Omit<Car, 'id'>) => {
         if (!isServerOnline) {
