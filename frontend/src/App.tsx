@@ -201,7 +201,7 @@ function App() {
         }
 
         try {
-            const addedCar = await carService.add(newCar);
+            await carService.add(newCar);
             //refresh the cars
             carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
                 .then((data) => {
@@ -229,7 +229,7 @@ function App() {
         }
 
         try {
-            const updatedCar = await carService.update(car.id, car);
+            await carService.update(car.id, car);
             //setCars((prev) => prev.map((c) => (c.id === car.id ? updatedCar : c)));
             //refresh the cars
             carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
@@ -451,7 +451,6 @@ function App() {
                         auth.token ? (
                             <AddDealershipPage
                                 onAddDealership={handleAddDealership}
-                                dealershipService={dealershipService}
                             />
                         ) : (
                             <LoginPage onLogin={handleLogin} />

@@ -1,5 +1,4 @@
 import DealershipListComponent from '../components/DealershipListComponent';
-import HeaderComponent from '../components/HeaderComponent'
 import Dealership from '../model/Dealership'
 import {SortField, SortOrder} from '../model/Types'
 import SortingDealershipComponent from '../components/SortingDealershipComponent';

@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Dealership from '../model/Dealership'
 import { useEffect, useState } from 'react';
-import ReactPaginate from "react-paginate";
-import CarListComponent from './CarListComponent';
 
 interface DealershipListProps {
     dealerships: Dealership[];

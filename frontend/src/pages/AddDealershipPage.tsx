@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import Car from '../model/Car';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/addCar.css'
-import DealershipService from '../service/dealershipService';
 import type Dealership from '../model/Dealership';
 
 interface AddDealershipProps {
   onAddDealership: (dealership: Omit<Dealership, 'id'>) => void;
-  dealershipService: DealershipService;
 }
 
-const AddDealershipPage: React.FC<AddDealershipProps> = ({ onAddDealership, dealershipService }) => {
+const AddDealershipPage: React.FC<AddDealershipProps> = ({ onAddDealership }) => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [contact, setContact] = useState('');
-  const [dealerships, setDealerships] = useState<Dealership[]>([]);
 
   const navigate = useNavigate();
 

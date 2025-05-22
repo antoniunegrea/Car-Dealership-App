@@ -32,7 +32,7 @@ const AddCarPage: React.FC<AddCarProps> = ({ onAddCar, dealershipService }) => {
       }
     };
     fetchDealerships();
-  }, []);
+  }, [dealershipService]);
 
   const handleGoBack = () => {
     navigate('/cars');

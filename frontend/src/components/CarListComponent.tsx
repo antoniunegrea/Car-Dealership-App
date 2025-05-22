@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import Car from '../model/Car'
 import '../styles/carList.css'
 import { useEffect, useState } from 'react';
-import ReactPaginate from "react-paginate";
 
 interface CarListProps {
     cars: Car[];

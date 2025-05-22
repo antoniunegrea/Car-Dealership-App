@@ -4,9 +4,6 @@ import Car from '../model/Car'
 import {SortField, SortOrder} from '../model/Types'
 import SortingComponent from '../components/SortingComponent';
 import '../styles/index.css'
-import HeaderComponentDealerships from '../components/HeaderComponentDealerships';
-import { useLocation } from 'react-router-dom';
-
 interface IndexProps{
     cars: Car[];
     handleDelete: (id: number) => void;
