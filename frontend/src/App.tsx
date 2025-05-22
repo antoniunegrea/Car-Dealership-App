@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Index from './pages/Index';
 import AddCarPage from './pages/AddCarPage';
@@ -37,7 +37,7 @@ function App() {
     const [searchTermDealerships, setSearchTermDealerships] = useState('');
     const [selectedDealershipId, setSelectedDealershipId] = useState<number | null>(null);
     const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
-    const [ws, setWs] = useState<WebSocket | null>(null);
+    const wsRef = useRef<WebSocket | null>(null);
     const [queuedOperations, setQueuedOperations] = useState<QueuedOperation[]>(() => {
         // Load queued operations from localStorage on mount
         const saved = localStorage.getItem('queuedOperations');
@@ -52,9 +52,9 @@ function App() {
     const dealershipService = new DealershipService("http://localhost:3000/api/dealerships");
     const carService = new CarService("http://localhost:3000/api/cars");
     */
-    const serverService = new ServerService("https://car-dealership-app-production.up.railway.app/api");
-    const dealershipService = new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships");
-    const carService = new CarService("https://car-dealership-app-production.up.railway.app/api/cars");
+    const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
+    const dealershipService = useMemo(() => new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships"), []);
+    const carService = useMemo(() => new CarService("https://car-dealership-app-production.up.railway.app/api/cars"), []);
    
 
     // Save queued operations to localStorage whenever they change
@@ -63,15 +63,15 @@ function App() {
     }, [queuedOperations]);
 
     // Initialize WebSocket connection
-    useEffect(() => {
+        useEffect(() => {
         let reconnectAttempts = 0;
         const maxReconnectAttempts = 100;
         const reconnectInterval = 3000;
 
         const connectWebSocket = () => {
             console.log('Attempting to connect to WebSocket...');
-            const websocket = new WebSocket('ws://localhost:3000/api');
-            setWs(websocket);
+            const websocket = new WebSocket('ws://car-dealership-app-production.up.railway.app/api');
+            wsRef.current = websocket;
 
             websocket.onopen = () => {
                 console.log('WebSocket connected');
@@ -89,7 +89,7 @@ function App() {
 
             websocket.onclose = () => {
                 console.log('WebSocket disconnected');
-                setWs(null);
+                wsRef.current = null;
                 if (reconnectAttempts < maxReconnectAttempts) {
                     console.log(`Reconnecting in ${reconnectInterval / 1000} seconds... (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
                     setTimeout(connectWebSocket, reconnectInterval);
@@ -107,24 +107,9 @@ function App() {
         connectWebSocket();
 
         return () => {
-            ws?.close();
+            wsRef.current?.close();
         };
     }, []);
-
-    // Check server status and sync queued operations when online
-    useEffect(() => {
-        const checkServerStatus = async () => {
-            const online = await serverService.isServerOnline();
-            if (online && !isServerOnline && queuedOperations.length > 0) {
-                // Server just came online, sync queued operations
-                await syncQueuedOperations();
-            }
-            setIsServerOnline(online);
-        };
-        checkServerStatus();
-        const intervalId = setInterval(checkServerStatus, 4000);
-        return () => clearInterval(intervalId);
-    }, [isServerOnline, queuedOperations]);
 
     // Add a wrapper for setSearchTerm to log changes
     const handleSearchTermCarsChange = (newSearchTerm: string) => {
@@ -155,10 +140,10 @@ function App() {
                 })
                 .catch((error) => console.error('Failed to load dealerships:', error));
         }
-    }, [searchTermCars, sortFieldCars, sortOrderCars, searchTermDealerships, sortFieldDealerships, sortOrderDealerships, isServerOnline, selectedDealershipId]);
+    }, [searchTermCars, sortFieldCars, sortOrderCars, searchTermDealerships, sortFieldDealerships, sortOrderDealerships, isServerOnline, selectedDealershipId, carService, dealershipService]);
 
     // Sync queued operations with the server
-    const syncQueuedOperations = async () => {
+    const syncQueuedOperations = useCallback(async () => {
         const operations = [...queuedOperations].sort((a, b) => a.timestamp - b.timestamp);
         for (const operation of operations) {
             try {
@@ -177,14 +162,27 @@ function App() {
                 }
             } catch (error) {
                 console.error(`Failed to sync ${operation.type} operation:`, error);
-                // If sync fails, keep the operation in the queue
                 return;
             }
         }
-        // Clear the queue after successful sync
         setQueuedOperations([]);
         localStorage.removeItem('queuedOperations');
-    };
+    }, [queuedOperations, carService]); // Add dependencies here
+
+        // Check server status and sync queued operations when online
+    useEffect(() => {
+        const checkServerStatus = async () => {
+            const online = await serverService.isServerOnline();
+            if (online && !isServerOnline && queuedOperations.length > 0) {
+                // Server just came online, sync queued operations
+                await syncQueuedOperations();
+            }
+            setIsServerOnline(online);
+        };
+        checkServerStatus();
+        const intervalId = setInterval(checkServerStatus, 4000);
+        return () => clearInterval(intervalId);
+    }, [isServerOnline, queuedOperations, serverService, syncQueuedOperations]);
 
     const handleAddCar = async (newCar: Omit<Car, 'id'>) => {
         if (!isServerOnline) {
