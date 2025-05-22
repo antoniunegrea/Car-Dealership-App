@@ -19,7 +19,7 @@ const AppDataSource = new DataSource({
     synchronize: false,
     logging: true,
     entities: [Car, Dealership, User, UserLog, UserMonitoring],
-    migrations: ['dist/migrations/*.js'],
+    //migrations: ['dist/migrations/*.js'],
     migrationsTableName: 'migrations',
     subscribers: [],
 });
