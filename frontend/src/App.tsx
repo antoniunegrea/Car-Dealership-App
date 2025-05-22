@@ -18,6 +18,7 @@ import AddDealershipPage from './pages/AddDealershipPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminMonitoredUsers from './pages/AdminMonitoredUsers';
+import useDebounce from './hooks/useDebounce';
 type OperationType = 'add' | 'update' | 'delete';
 
 interface QueuedOperation {
@@ -65,8 +66,8 @@ function App() {
     // Initialize WebSocket connection
         useEffect(() => {
         let reconnectAttempts = 0;
-        const maxReconnectAttempts = 100;
-        const reconnectInterval = 300000;
+        const maxReconnectAttempts = 5;
+        const reconnectInterval = 60000;
 
         const connectWebSocket = () => {
             console.log('Attempting to connect to WebSocket...');
@@ -111,36 +112,49 @@ function App() {
         };
     }, []);
 
-    // Add a wrapper for setSearchTerm to log changes
-    const handleSearchTermCarsChange = (newSearchTerm: string) => {
-        console.log("Search term changing to:", newSearchTerm);
-        setSearchTermCars(newSearchTerm);
-    };
+    // Add debounced search terms
+    const debouncedSearchTermCars = useDebounce(searchTermCars, 500);
+    const debouncedSearchTermDealerships = useDebounce(searchTermDealerships, 500);
 
-    const handleSearchTermDealershipsChange = (newSearchTerm: string) => {
-        console.log("Search term changing to:", newSearchTerm);
-        setSearchTermDealerships(newSearchTerm);
-    };
-
-    // Fetch cars via HTTP (initial load or fallback)
+    // Update the useEffect to use debounced search terms
     useEffect(() => {
-        console.log("Effect triggered with searchTerm:", searchTermCars);
+        console.log("Effect triggered with searchTerm:", debouncedSearchTermCars);
         if (isServerOnline) {
             console.log("Server is online, making request");
-            carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
+            carService.get({ 
+                searchTerm: debouncedSearchTermCars, 
+                sortBy: sortFieldCars, 
+                order: sortOrderCars, 
+                selectedDealershipId: selectedDealershipId ?? undefined 
+            })
                 .then((data) => {
                     console.log("Received cars data:", data);
                     setCars(data);
                 })
                 .catch((error) => console.error('Failed to load cars:', error));
-            dealershipService.getAll({ searchTerm: searchTermDealerships, sortBy: sortFieldDealerships, order: sortOrderDealerships})
+            dealershipService.getAll({ 
+                searchTerm: debouncedSearchTermDealerships, 
+                sortBy: sortFieldDealerships, 
+                order: sortOrderDealerships
+            })
                 .then((data) => {
                     console.log("Received dealerships data:", data);
                     setDealerships(data);
                 })
                 .catch((error) => console.error('Failed to load dealerships:', error));
         }
-    }, [searchTermCars, sortFieldCars, sortOrderCars, searchTermDealerships, sortFieldDealerships, sortOrderDealerships, isServerOnline, selectedDealershipId, carService, dealershipService]);
+    }, [
+        debouncedSearchTermCars, 
+        debouncedSearchTermDealerships, 
+        sortFieldCars, 
+        sortOrderCars, 
+        sortFieldDealerships, 
+        sortOrderDealerships, 
+        isServerOnline, 
+        selectedDealershipId, 
+        carService, 
+        dealershipService
+    ]);
 
     // Sync queued operations with the server
     const syncQueuedOperations = useCallback(async () => {
@@ -180,7 +194,7 @@ function App() {
             setIsServerOnline(online);
         };
         checkServerStatus();
-        const intervalId = setInterval(checkServerStatus, 10000);
+        const intervalId = setInterval(checkServerStatus, 30000);
         return () => clearInterval(intervalId);
     }, [isServerOnline, queuedOperations, serverService, syncQueuedOperations]);
 
@@ -366,7 +380,7 @@ function App() {
                                 sortOrder={sortOrderCars}
                                 setSortOrder={setSortOrderCars}
                                 searchTerm={searchTermCars}
-                                setSearchTerm={handleSearchTermCarsChange}
+                                setSearchTerm={setSearchTermCars}
                                 isServerOnline={isServerOnline}
                             />
                         ) : (
@@ -433,7 +447,7 @@ function App() {
                                 sortOrder={sortOrderDealerships}
                                 setSortOrder={setSortOrderDealerships}
                                 searchTerm={searchTermDealerships}
-                                setSearchTerm={handleSearchTermDealershipsChange}
+                                setSearchTerm={setSearchTermDealerships}
                                 isServerOnline={isServerOnline}
                                 selectedDealershipId={selectedDealershipId}
                                 setSelectedDealershipId={setSelectedDealershipId}
