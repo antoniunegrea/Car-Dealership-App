@@ -48,9 +48,14 @@ function App() {
         user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
     });
 
-    const serverService = new ServerService("http://localhost:3000/api");
+    /*const serverService = new ServerService("http://localhost:3000/api");
     const dealershipService = new DealershipService("http://localhost:3000/api/dealerships");
     const carService = new CarService("http://localhost:3000/api/cars");
+    */
+    const serverService = new ServerService("https://car-dealership-app-production.up.railway.app/api");
+    const dealershipService = new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships");
+    const carService = new CarService("https://car-dealership-app-production.up.railway.app/api/cars");
+   
 
     // Save queued operations to localStorage whenever they change
     useEffect(() => {
