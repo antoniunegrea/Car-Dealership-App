@@ -21,7 +21,7 @@ interface DealershipsProps{
 }
 
 
-const Index: React.FC<DealershipsProps> = ({ dealerships, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline, selectedDealershipId, setSelectedDealershipId}) => {
+const Dealerships: React.FC<DealershipsProps> = ({ dealerships, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline, selectedDealershipId, setSelectedDealershipId}) => {
     return (
         <div className='components-container'>
             <HeaderComponentDealerships searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
@@ -55,4 +55,4 @@ const Index: React.FC<DealershipsProps> = ({ dealerships, handleDelete, sortFiel
     );
 }
 
-export default Index;
+export default Dealerships;

@@ -118,39 +118,65 @@ function App() {
     const debouncedSearchTermCars = useDebounce(searchTermCars, 500);
     const debouncedSearchTermDealerships = useDebounce(searchTermDealerships, 500);
 
-    // Update the useEffect to use debounced search terms and reduce data fetching
+    // Load initial data when component mounts
+    useEffect(() => {
+        if (isServerOnline) {
+            // Load initial cars data
+            carService.get({ 
+                searchTerm: '', 
+                sortBy: sortFieldCars, 
+                order: sortOrderCars, 
+                selectedDealershipId: selectedDealershipId ?? undefined 
+            })
+                .then((data) => {
+                    console.log("Received initial cars data:", data);
+                    setCars(data);
+                })
+                .catch((error) => console.error('Failed to load initial cars:', error));
+
+            // Load initial dealerships data
+            dealershipService.getAll({ 
+                searchTerm: '', 
+                sortBy: sortFieldDealerships, 
+                order: sortOrderDealerships
+            })
+                .then((data) => {
+                    console.log("Received initial dealerships data:", data);
+                    setDealerships(data);
+                })
+                .catch((error) => console.error('Failed to load initial dealerships:', error));
+        }
+    }, [isServerOnline, carService, dealershipService]); // Only run on mount and when services change
+
+    // Update data when search terms or sorting changes
     useEffect(() => {
         console.log("Effect triggered with searchTerm:", debouncedSearchTermCars);
         if (isServerOnline) {
             console.log("Server is online, making request");
-            // Only fetch cars when search term changes
-            if (debouncedSearchTermCars !== '') {
-                carService.get({ 
-                    searchTerm: debouncedSearchTermCars, 
-                    sortBy: sortFieldCars, 
-                    order: sortOrderCars, 
-                    selectedDealershipId: selectedDealershipId ?? undefined 
+            // Fetch cars data - removed the empty check to allow refreshing on empty search
+            carService.get({ 
+                searchTerm: debouncedSearchTermCars, 
+                sortBy: sortFieldCars, 
+                order: sortOrderCars, 
+                selectedDealershipId: selectedDealershipId ?? undefined 
+            })
+                .then((data) => {
+                    console.log("Received cars data:", data);
+                    setCars(data);
                 })
-                    .then((data) => {
-                        console.log("Received cars data:", data);
-                        setCars(data);
-                    })
-                    .catch((error) => console.error('Failed to load cars:', error));
-            }
+                .catch((error) => console.error('Failed to load cars:', error));
             
-            // Only fetch dealerships when search term changes
-            if (debouncedSearchTermDealerships !== '') {
-                dealershipService.getAll({ 
-                    searchTerm: debouncedSearchTermDealerships, 
-                    sortBy: sortFieldDealerships, 
-                    order: sortOrderDealerships
+            // Fetch dealerships data - removed the empty check to allow refreshing on empty search
+            dealershipService.getAll({ 
+                searchTerm: debouncedSearchTermDealerships, 
+                sortBy: sortFieldDealerships, 
+                order: sortOrderDealerships
+            })
+                .then((data) => {
+                    console.log("Received dealerships data:", data);
+                    setDealerships(data);
                 })
-                    .then((data) => {
-                        console.log("Received dealerships data:", data);
-                        setDealerships(data);
-                    })
-                    .catch((error) => console.error('Failed to load dealerships:', error));
-            }
+                .catch((error) => console.error('Failed to load dealerships:', error));
         }
     }, [
         debouncedSearchTermCars, 
