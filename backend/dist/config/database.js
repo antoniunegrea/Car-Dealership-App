@@ -21,7 +21,7 @@ const AppDataSource = new typeorm_1.DataSource({
     synchronize: false,
     logging: true,
     entities: [Car_1.Car, Dealership_1.Dealership, User_1.default, UserLog_1.default, UserMonitoring_1.default],
-    migrations: ['src/migrations/*.ts'],
+    migrations: ['dist/migrations/*.js'],
     migrationsTableName: 'migrations',
     subscribers: [],
 });
