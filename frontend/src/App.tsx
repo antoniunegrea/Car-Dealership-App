@@ -165,22 +165,6 @@ function App() {
         dealershipService
     ]);
 
-    // Comment out server status checking to reduce memory usage
-    /*
-    useEffect(() => {
-        const checkServerStatus = async () => {
-            const online = await serverService.isServerOnline();
-            if (online && !isServerOnline && queuedOperations.length > 0) {
-                await syncQueuedOperations();
-            }
-            setIsServerOnline(online);
-        };
-        checkServerStatus();
-        const intervalId = setInterval(checkServerStatus, 30000);
-        return () => clearInterval(intervalId);
-    }, [isServerOnline, queuedOperations, serverService, syncQueuedOperations]);
-    */
-
     // Sync queued operations with the server
     const syncQueuedOperations = useCallback(async () => {
         const operations = [...queuedOperations].sort((a, b) => a.timestamp - b.timestamp);
@@ -206,7 +190,20 @@ function App() {
         }
         setQueuedOperations([]);
         localStorage.removeItem('queuedOperations');
-    }, [queuedOperations, carService]); // Add dependencies here
+    }, [queuedOperations, carService]);
+
+    useEffect(() => {
+        const checkServerStatus = async () => {
+            const online = await serverService.isServerOnline();
+            if (online && !isServerOnline && queuedOperations.length > 0) {
+                await syncQueuedOperations();
+            }
+            setIsServerOnline(online);
+        };
+        checkServerStatus();
+        const intervalId = setInterval(checkServerStatus, 30000);
+        return () => clearInterval(intervalId);
+    }, [isServerOnline, queuedOperations, serverService, syncQueuedOperations]);
 
     const handleAddCar = async (newCar: Omit<Car, 'id'>) => {
         if (!isServerOnline) {
