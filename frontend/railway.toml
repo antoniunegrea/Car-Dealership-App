@@ -7,4 +7,4 @@ cache = true
 startCommand = "serve -s build"
 healthcheckPath = "/"
 healthcheckTimeout = 100
-restartPolicyType = "on-failure"
+restartPolicyType = "ALWAYS"
