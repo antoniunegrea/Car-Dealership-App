@@ -63,8 +63,9 @@ function App() {
         localStorage.setItem('queuedOperations', JSON.stringify(queuedOperations));
     }, [queuedOperations]);
 
-    // Initialize WebSocket connection
-        useEffect(() => {
+    // Comment out WebSocket connection to reduce memory usage
+    /*
+    useEffect(() => {
         let reconnectAttempts = 0;
         const maxReconnectAttempts = 5;
         const reconnectInterval = 60000;
@@ -111,37 +112,45 @@ function App() {
             wsRef.current?.close();
         };
     }, []);
+    */
 
     // Add debounced search terms
     const debouncedSearchTermCars = useDebounce(searchTermCars, 500);
     const debouncedSearchTermDealerships = useDebounce(searchTermDealerships, 500);
 
-    // Update the useEffect to use debounced search terms
+    // Update the useEffect to use debounced search terms and reduce data fetching
     useEffect(() => {
         console.log("Effect triggered with searchTerm:", debouncedSearchTermCars);
         if (isServerOnline) {
             console.log("Server is online, making request");
-            carService.get({ 
-                searchTerm: debouncedSearchTermCars, 
-                sortBy: sortFieldCars, 
-                order: sortOrderCars, 
-                selectedDealershipId: selectedDealershipId ?? undefined 
-            })
-                .then((data) => {
-                    console.log("Received cars data:", data);
-                    setCars(data);
+            // Only fetch cars when search term changes
+            if (debouncedSearchTermCars !== '') {
+                carService.get({ 
+                    searchTerm: debouncedSearchTermCars, 
+                    sortBy: sortFieldCars, 
+                    order: sortOrderCars, 
+                    selectedDealershipId: selectedDealershipId ?? undefined 
                 })
-                .catch((error) => console.error('Failed to load cars:', error));
-            dealershipService.getAll({ 
-                searchTerm: debouncedSearchTermDealerships, 
-                sortBy: sortFieldDealerships, 
-                order: sortOrderDealerships
-            })
-                .then((data) => {
-                    console.log("Received dealerships data:", data);
-                    setDealerships(data);
+                    .then((data) => {
+                        console.log("Received cars data:", data);
+                        setCars(data);
+                    })
+                    .catch((error) => console.error('Failed to load cars:', error));
+            }
+            
+            // Only fetch dealerships when search term changes
+            if (debouncedSearchTermDealerships !== '') {
+                dealershipService.getAll({ 
+                    searchTerm: debouncedSearchTermDealerships, 
+                    sortBy: sortFieldDealerships, 
+                    order: sortOrderDealerships
                 })
-                .catch((error) => console.error('Failed to load dealerships:', error));
+                    .then((data) => {
+                        console.log("Received dealerships data:", data);
+                        setDealerships(data);
+                    })
+                    .catch((error) => console.error('Failed to load dealerships:', error));
+            }
         }
     }, [
         debouncedSearchTermCars, 
@@ -155,6 +164,22 @@ function App() {
         carService, 
         dealershipService
     ]);
+
+    // Comment out server status checking to reduce memory usage
+    /*
+    useEffect(() => {
+        const checkServerStatus = async () => {
+            const online = await serverService.isServerOnline();
+            if (online && !isServerOnline && queuedOperations.length > 0) {
+                await syncQueuedOperations();
+            }
+            setIsServerOnline(online);
+        };
+        checkServerStatus();
+        const intervalId = setInterval(checkServerStatus, 30000);
+        return () => clearInterval(intervalId);
+    }, [isServerOnline, queuedOperations, serverService, syncQueuedOperations]);
+    */
 
     // Sync queued operations with the server
     const syncQueuedOperations = useCallback(async () => {
@@ -182,21 +207,6 @@ function App() {
         setQueuedOperations([]);
         localStorage.removeItem('queuedOperations');
     }, [queuedOperations, carService]); // Add dependencies here
-
-        // Check server status and sync queued operations when online
-    useEffect(() => {
-        const checkServerStatus = async () => {
-            const online = await serverService.isServerOnline();
-            if (online && !isServerOnline && queuedOperations.length > 0) {
-                // Server just came online, sync queued operations
-                await syncQueuedOperations();
-            }
-            setIsServerOnline(online);
-        };
-        checkServerStatus();
-        const intervalId = setInterval(checkServerStatus, 30000);
-        return () => clearInterval(intervalId);
-    }, [isServerOnline, queuedOperations, serverService, syncQueuedOperations]);
 
     const handleAddCar = async (newCar: Omit<Car, 'id'>) => {
         if (!isServerOnline) {
