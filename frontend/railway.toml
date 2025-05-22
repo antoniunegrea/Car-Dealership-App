@@ -4,7 +4,5 @@ buildCommand = "npm run build:railway"
 cache = true
 
 [deploy]
-startCommand = "serve -s build"
-healthcheckPath = "/"
-healthcheckTimeout = 100
+startCommand = "npm start"
 restartPolicyType = "ALWAYS"

@@ -66,7 +66,7 @@ function App() {
         useEffect(() => {
         let reconnectAttempts = 0;
         const maxReconnectAttempts = 100;
-        const reconnectInterval = 3000;
+        const reconnectInterval = 300000;
 
         const connectWebSocket = () => {
             console.log('Attempting to connect to WebSocket...');
@@ -180,7 +180,7 @@ function App() {
             setIsServerOnline(online);
         };
         checkServerStatus();
-        const intervalId = setInterval(checkServerStatus, 4000);
+        const intervalId = setInterval(checkServerStatus, 10000);
         return () => clearInterval(intervalId);
     }, [isServerOnline, queuedOperations, serverService, syncQueuedOperations]);
 
