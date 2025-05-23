@@ -19,6 +19,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminMonitoredUsers from './pages/AdminMonitoredUsers';
 import useDebounce from './hooks/useDebounce';
+import AdminService from './service/adminService';
 type OperationType = 'add' | 'update' | 'delete';
 
 interface QueuedOperation {
@@ -56,6 +57,7 @@ function App() {
     const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
     const dealershipService = useMemo(() => new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships"), []);
     const carService = useMemo(() => new CarService("https://car-dealership-app-production.up.railway.app/api/cars"), []);
+    const adminService = useMemo(() => new AdminService("https://car-dealership-app-production.up.railway.app/api/admin"), []);
    
 
     // Save queued operations to localStorage whenever they change
@@ -395,7 +397,7 @@ function App() {
                     path="/admin/monitored-users"
                     element={
                         auth.token && auth.user && auth.user.role === 'admin' ? (
-                            <AdminMonitoredUsers />
+                            <AdminMonitoredUsers adminService={adminService} />
                         ) : (
                             <div style={{ padding: 20 }}>Access denied. Admins only.</div>
                         )

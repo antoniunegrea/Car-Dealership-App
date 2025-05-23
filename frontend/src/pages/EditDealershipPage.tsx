@@ -17,9 +17,6 @@ const EditDealershipPage: React.FC<EditDealershipProps> = ( {dealerships, onEdit
     const [location, setLocation] = useState('');
     const [contact, setContact] = useState('');
 
-    console.log("name"+name+".");
-    console.log("location"+location+".");
-    console.log("contact"+contact+".");
     useEffect(() => {
         if (dealershipToEdit) {
             console.log("Setting dealership values from:", dealershipToEdit);

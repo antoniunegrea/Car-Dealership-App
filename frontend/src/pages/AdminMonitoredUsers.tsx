@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdminService from '../service/adminService';
 
 interface MonitoredUser {
   id: number;
@@ -12,7 +13,11 @@ interface MonitoredUser {
   lastChecked: string;
 }
 
-const AdminMonitoredUsers: React.FC = () => {
+interface AdminMonitoredUsersProps {
+  adminService: AdminService;
+}
+
+const AdminMonitoredUsers: React.FC<AdminMonitoredUsersProps> = ({ adminService }) => {
   const [users, setUsers] = useState<MonitoredUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,12 +29,11 @@ const AdminMonitoredUsers: React.FC = () => {
       setError('');
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3000/api/admin/monitored-users', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) throw new Error('Failed to fetch monitored users');
-        const data = await response.json();
-        setUsers(data);
+        if (!token) {
+          throw new Error('No token found');
+        }
+        const response = await adminService.getMonitoredUsers(token);
+        setUsers(response);
       } catch (err: any) {
         setError(err.message || 'Error fetching monitored users');
       } finally {

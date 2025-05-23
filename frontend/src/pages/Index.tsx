@@ -4,6 +4,7 @@ import Car from '../model/Car'
 import {SortField, SortOrder} from '../model/Types'
 import SortingComponent from '../components/SortingComponent';
 import '../styles/index.css'
+
 interface IndexProps{
     cars: Car[];
     handleDelete: (id: number) => void;
