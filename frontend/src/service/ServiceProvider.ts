@@ -15,7 +15,7 @@ export default class ServiceProvider {
     }
 
     private initializeServices() {
-        const baseUrl = 'http://localhost:3000/api';
+        const baseUrl = 'https://car-dealership-app-production.up.railway.app/api';
         this.services.set('car', new CarService(`${baseUrl}/cars`));
         this.services.set('server', new ServerService(`${baseUrl}`));
         this.services.set('dealership', new DealershipService(`${baseUrl}/dealerships`));

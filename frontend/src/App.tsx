@@ -61,12 +61,6 @@ function App() {
     const adminService = serviceProvider.getService<AdminService>('admin');
     const serverService = serviceProvider.getService<ServerService>('server');
     const fileService = serviceProvider.getService<FileService>('file');
-    
-    /*const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
-    const dealershipService = useMemo(() => new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships"), []);
-    const carService = useMemo(() => new CarService("https://car-dealership-app-production.up.railway.app/api/cars"), []);
-    const adminService = useMemo(() => new AdminService("https://car-dealership-app-production.up.railway.app/api/admin"), []);
-    */
 
     // Save queued operations to localStorage whenever they change
     useEffect(() => {
