@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Car from '../model/Car';
 import CarService from '../service/CarService';
 import '../styles/carList.css'
+import { stat } from 'fs';
 
 interface CarListProps {
     cars: Car[];
@@ -15,6 +16,8 @@ const CarListComponent: React.FC<CarListProps> = ({ cars, onDelete, carService }
     const [stats, setStats] = useState({ minPrice: 0, maxPrice: 0, avgPrice: 0 });
     const [visibleCount, setVisibleCount] = useState(10);
     const incrementCount = 5;
+
+    const PRICE_ERROR = 300;
     
     const displayedCars = cars.slice(0, visibleCount);
 
@@ -27,6 +30,8 @@ const CarListComponent: React.FC<CarListProps> = ({ cars, onDelete, carService }
                     maxPrice: statsData.maxPrice,
                     avgPrice: statsData.avgPrice
                 });
+                // log the stats
+                console.log("avgPrice: " + statsData.avgPrice);
             } catch (error) {
                 console.error('Failed to fetch car stats:', error);
             }
@@ -76,16 +81,16 @@ const CarListComponent: React.FC<CarListProps> = ({ cars, onDelete, carService }
                                 'lightcoral' :
                                 Number(car.price) === stats.minPrice ?
                                 'lightgreen' :
-                                Math.abs(Number(car.price) - stats.avgPrice) < 100 ?
+                                Math.abs(Number(car.price) - stats.avgPrice) < PRICE_ERROR ?
                                 'lightblue' :
-                                'transparent',
+                                'transparent'
                         }}
                     >
                         {Number(car.price) === stats.maxPrice ?
                             'The most expensive car' :
                             Number(car.price) === stats.minPrice ?
                             'The cheapest car' :
-                            Math.abs(Number(car.price) - stats.avgPrice) < 100 ?
+                            Math.abs(Number(car.price) - stats.avgPrice) < PRICE_ERROR ?
                             'The average price car' :
                             ''}
                     </div>   

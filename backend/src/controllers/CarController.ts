@@ -166,12 +166,12 @@ export class CarController {
             const prices = cars.map(car => car.price);
             const minPrice = Math.min(...prices);
             const maxPrice = Math.max(...prices);
-            const avgPrice = Math.floor(prices.reduce((sum, price) => sum + price, 0) / prices.length);
-
+            const avgPrice = minPrice + maxPrice / 2;
+            
             res.json({
                 minPrice,
                 maxPrice,
-                avgPrice
+                avgPrice,
             });
         } catch (error) {
             console.error('Error getting car stats:', error);
