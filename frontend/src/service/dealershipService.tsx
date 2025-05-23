@@ -42,11 +42,11 @@ class DealershipService {
         }
     }
 
-    async add(newDealership: Omit<Dealership, 'id' | 'cars'>): Promise<Dealership> {
+    async add(newDealership: Omit<Dealership, 'id' | 'cars'>, token: string): Promise<Dealership> {
         try {
             const response = await fetch(this.baseUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(newDealership),
             });
             if (!response.ok) {
@@ -59,11 +59,11 @@ class DealershipService {
         }
     }
 
-    async update(id: number, dealership: Partial<Dealership>): Promise<Dealership> {
+    async update(id: number, dealership: Partial<Dealership>, token: string): Promise<Dealership> {
         try {
             const response = await fetch(`${this.baseUrl}/${id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(dealership),
             });
             if (!response.ok) {
@@ -76,9 +76,9 @@ class DealershipService {
         }
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(id: number, token: string): Promise<void> {
         try {
-            const response = await fetch(`${this.baseUrl}/${id}`, { method: 'DELETE' });
+            const response = await fetch(`${this.baseUrl}/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

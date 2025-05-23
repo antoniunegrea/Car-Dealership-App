@@ -63,7 +63,7 @@ export class FileController {
         }
         const protocol = req.protocol;
         const host = req.get('host');
-        const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+        const fileUrl = `${protocol}://${host}/api/files/uploads/${req.file.filename}`;
         console.log('Uploaded file URL:', fileUrl);
         res.status(200).json({ message: 'File uploaded successfully', fileUrl });
     }

@@ -203,15 +203,15 @@ function App() {
             try {
                 if (operation.type === 'add') {
                     const newCar = operation.data as Omit<Car, 'id'>;
-                    const addedCar = await carService.add(newCar);
+                    const addedCar = await carService.add(newCar, auth.token ?? '');
                     setCars((prev) => [...prev.filter(c => c.id !== (newCar as any).tempId), addedCar]);
                 } else if (operation.type === 'update') {
                     const car = operation.data as Car;
-                    const updatedCar = await carService.update(car.id, car);
+                    const updatedCar = await carService.update(car.id, car, auth.token ?? '');
                     setCars((prev) => prev.map(c => c.id === car.id ? updatedCar : c));
                 } else if (operation.type === 'delete') {
                     const id = operation.data as number;
-                    await carService.delete(id);
+                    await carService.delete(id, auth.token ?? '');
                     setCars((prev) => prev.filter(c => c.id !== id));
                 }
             } catch (error) {
@@ -251,7 +251,7 @@ function App() {
         }
 
         try {
-            await carService.add(newCar);
+            await carService.add(newCar, auth.token ?? '');
             //refresh the cars
             carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
                 .then((data) => {
@@ -279,7 +279,7 @@ function App() {
         }
 
         try {
-            await carService.update(car.id, car);
+            await carService.update(car.id, car, auth.token ?? '');
             //setCars((prev) => prev.map((c) => (c.id === car.id ? updatedCar : c)));
             //refresh the cars
             carService.get({ searchTerm: searchTermCars, sortBy: sortFieldCars, order: sortOrderCars, selectedDealershipId: selectedDealershipId ?? undefined })
@@ -308,7 +308,7 @@ function App() {
         }
 
         try {
-            await carService.delete(id);
+            await carService.delete(id, auth.token ?? '');
             setCars((prev) => prev.filter((c) => c.id !== id));
             window.alert('Car deleted successfully!');
         } catch (error) {
@@ -325,7 +325,7 @@ function App() {
         }
 
         try {
-            await dealershipService.delete(id);
+            await dealershipService.delete(id, auth.token ?? '');
             setDealerships((prev) => prev.filter((d) => d.id !== id));
             window.alert('Dealership deleted successfully!');
         } catch (error) {
@@ -342,7 +342,7 @@ function App() {
         }
 
         try {
-            const addedDealership = await dealershipService.add(newDealership);
+            const addedDealership = await dealershipService.add(newDealership, auth.token ?? '');
             setDealerships((prev) => [...prev, addedDealership]);
             window.alert('Dealership added successfully!');
         } catch (error) {
@@ -359,7 +359,7 @@ function App() {
         }
 
         try {
-            const updatedDealership = await dealershipService.update(dealership.id, dealership);
+            const updatedDealership = await dealershipService.update(dealership.id, dealership, auth.token ?? '');
             setDealerships((prev) => prev.map((d) => (d.id === dealership.id ? updatedDealership : d)));
             window.alert('Dealership edited successfully!');
         } catch (error) {

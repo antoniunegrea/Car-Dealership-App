@@ -18,7 +18,7 @@ const FileManagerPage: React.FC = () => {
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/files');
+                const response = await axios.get('http://localhost:3000/api/files/all');
                 setUploadedFiles(response.data);
             } catch (err) {
                 console.error('Error fetching files:', err);
@@ -44,7 +44,7 @@ const FileManagerPage: React.FC = () => {
         formData.append('file', file);
 
         try {
-            const response = await axios.post('http://localhost:3000/api/upload', formData, {
+            const response = await axios.post('http://localhost:3000/api/files/upload', formData, {
                 onUploadProgress: (progressEvent) => {
                     if (progressEvent.total) {
                         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
