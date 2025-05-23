@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
-import authService, { User } from '../service/authService';
-import AuthService from '../service/authService';
+import { User } from '../model/User';
+import { AuthService } from '../service/AuthService';
 
 interface LoginPageProps {
   onLogin: (token: string, user: User) => void;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Car from '../model/Car';
-import CarService from '../service/carService';
+import CarService from '../service/CarService';
 import '../styles/carList.css'
 
 interface CarListProps {

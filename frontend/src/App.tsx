@@ -6,9 +6,9 @@ import EditCarPage from './pages/EditCarPage';
 import Charts from './pages/Charts';
 import FileManagerPage from './pages/FileManagerPage';
 import Car from './model/Car';
-import CarService from './service/carService';
-import ServerService from './service/serverService'
-import DealershipService from './service/dealershipService';
+import CarService from './service/CarService';
+import ServerService from './service/ServerService';
+import DealershipService from './service/DealershipService';
 import { SortField, SortOrder } from './model/Types';
 import Dealerships from './pages/Dealerships';
 import Dealership from './model/Dealership';
@@ -19,8 +19,11 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminMonitoredUsers from './pages/AdminMonitoredUsers';
 import useDebounce from './hooks/useDebounce';
-import AdminService from './service/adminService';
-import AuthService from './service/authService';
+import AdminService from './service/AdminService';
+import { AuthService } from './service/AuthService';
+import { FileService } from './service/FileService';
+import ServiceProvider from './service/ServiceProvider';
+
 type OperationType = 'add' | 'update' | 'delete';
 
 interface QueuedOperation {
@@ -51,11 +54,13 @@ function App() {
         user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
     });
 
-    const serverService = useMemo(() => new ServerService("http://localhost:3000/api"), []);
-    const dealershipService = useMemo(() => new DealershipService("http://localhost:3000/api/dealerships"), []);
-    const carService = useMemo(() => new CarService("http://localhost:3000/api/cars"), []);
-    const adminService = useMemo(() => new AdminService("http://localhost:3000/api/admin"), []);
-    const authService = useMemo(() => new AuthService("http://localhost:3000/api/auth"), []);
+    const serviceProvider = ServiceProvider.getInstance();
+    const authService = serviceProvider.getService<AuthService>('auth');
+    const carService = serviceProvider.getService<CarService>('car');
+    const dealershipService = serviceProvider.getService<DealershipService>('dealership');
+    const adminService = serviceProvider.getService<AdminService>('admin');
+    const serverService = serviceProvider.getService<ServerService>('server');
+    const fileService = serviceProvider.getService<FileService>('file');
     
     /*const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
     const dealershipService = useMemo(() => new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships"), []);
@@ -468,7 +473,7 @@ function App() {
                     path="/files"
                     element={
                         auth.token ? (
-                            <FileManagerPage />
+                            <FileManagerPage fileService={fileService} />
                         ) : (
                             <LoginPage onLogin={handleLogin} authService={authService} />
                         )

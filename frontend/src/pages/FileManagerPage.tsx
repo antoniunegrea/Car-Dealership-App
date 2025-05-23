@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import '../styles/fileManager.css';
+import { FileService, UploadedFile } from '../service/FileService';
 
-interface UploadedFile {
-    url: string;
-    name: string;
+interface FileManagerPageProps {
+    fileService: FileService;
 }
 
-const FileManagerPage: React.FC = () => {
+const FileManagerPage: React.FC<FileManagerPageProps> = ({ fileService }) => {
     const navigate = useNavigate();
     const [file, setFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
@@ -18,8 +17,8 @@ const FileManagerPage: React.FC = () => {
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/files/all');
-                setUploadedFiles(response.data);
+                const files = await fileService.getAllFiles();
+                setUploadedFiles(files);
             } catch (err) {
                 console.error('Error fetching files:', err);
             }
@@ -40,20 +39,14 @@ const FileManagerPage: React.FC = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('file', file);
-
         try {
-            const response = await axios.post('http://localhost:3000/api/files/upload', formData, {
-                onUploadProgress: (progressEvent) => {
-                    if (progressEvent.total) {
-                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                        setUploadProgress(percentCompleted);
-                    }
-                },
+            const { fileUrl } = await fileService.uploadFile(file, (progressEvent) => {
+                if (progressEvent.total) {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setUploadProgress(percentCompleted);
+                }
             });
 
-            const fileUrl = response.data.fileUrl;
             setUploadedFiles((prev) => [...prev, { url: fileUrl, name: file.name }]);
             setUploadProgress(0);
             setFile(null);

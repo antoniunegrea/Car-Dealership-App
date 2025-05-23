@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/register.css'
-import authService from '../service/authService';
-import AuthService from '../service/authService';
+import { AuthService } from '../service/AuthService';
 
 interface RegisterPageProps {
   authService: AuthService;

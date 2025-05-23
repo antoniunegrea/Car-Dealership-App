@@ -4,7 +4,7 @@ import Car from '../model/Car'
 import {SortField, SortOrder} from '../model/Types'
 import SortingComponent from '../components/SortingComponent';
 import '../styles/index.css'
-import CarService from '../service/carService';
+import CarService from '../service/CarService';
 
 interface IndexProps{
     cars: Car[];

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Car from '../model/Car';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/editCar.css';
-import DealershipService from '../service/dealershipService';
+import DealershipService from '../service/DealershipService';
 import type Dealership from '../model/Dealership';
 
 interface EditCarProps {

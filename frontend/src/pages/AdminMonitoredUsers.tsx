@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminService from '../service/adminService';
+import AdminService from '../service/AdminService';
 
 interface MonitoredUser {
   id: number;
