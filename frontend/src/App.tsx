@@ -20,6 +20,7 @@ import RegisterPage from './pages/RegisterPage';
 import AdminMonitoredUsers from './pages/AdminMonitoredUsers';
 import useDebounce from './hooks/useDebounce';
 import AdminService from './service/adminService';
+import AuthService from './service/authService';
 type OperationType = 'add' | 'update' | 'delete';
 
 interface QueuedOperation {
@@ -50,15 +51,17 @@ function App() {
         user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
     });
 
-    /*const serverService = new ServerService("http://localhost:3000/api");
-    const dealershipService = new DealershipService("http://localhost:3000/api/dealerships");
-    const carService = new CarService("http://localhost:3000/api/cars");
-    */
-    const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
+    const serverService = useMemo(() => new ServerService("http://localhost:3000/api"), []);
+    const dealershipService = useMemo(() => new DealershipService("http://localhost:3000/api/dealerships"), []);
+    const carService = useMemo(() => new CarService("http://localhost:3000/api/cars"), []);
+    const adminService = useMemo(() => new AdminService("http://localhost:3000/api/admin"), []);
+    const authService = useMemo(() => new AuthService("http://localhost:3000/api/auth"), []);
+    
+    /*const serverService = useMemo(() => new ServerService("https://car-dealership-app-production.up.railway.app/api"), []);
     const dealershipService = useMemo(() => new DealershipService("https://car-dealership-app-production.up.railway.app/api/dealerships"), []);
     const carService = useMemo(() => new CarService("https://car-dealership-app-production.up.railway.app/api/cars"), []);
     const adminService = useMemo(() => new AdminService("https://car-dealership-app-production.up.railway.app/api/admin"), []);
-   
+    */
 
     // Save queued operations to localStorage whenever they change
     useEffect(() => {
@@ -391,8 +394,8 @@ function App() {
                 )}
             </div>
             <Routes>
-                <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/" element={<LoginPage onLogin={handleLogin} authService={authService} />} />
+                <Route path="/register" element={<RegisterPage authService={authService} />} />
                 <Route
                     path="/admin/monitored-users"
                     element={
@@ -417,9 +420,10 @@ function App() {
                                 searchTerm={searchTermCars}
                                 setSearchTerm={setSearchTermCars}
                                 isServerOnline={isServerOnline}
+                                carService={carService}
                             />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />
@@ -432,7 +436,7 @@ function App() {
                                 dealershipService={dealershipService}
                             />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />
@@ -446,7 +450,7 @@ function App() {
                                 dealershipService={dealershipService}
                             />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />
@@ -456,7 +460,7 @@ function App() {
                         auth.token ? (
                             <Charts cars={cars} dealerships={dealerships} />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />
@@ -466,7 +470,7 @@ function App() {
                         auth.token ? (
                             <FileManagerPage />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />
@@ -488,7 +492,7 @@ function App() {
                                 setSelectedDealershipId={setSelectedDealershipId}
                             />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />
@@ -500,7 +504,7 @@ function App() {
                                 onAddDealership={handleAddDealership}
                             />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />
@@ -513,7 +517,7 @@ function App() {
                                 onEditDealership={handleEditDealership}
                             />
                         ) : (
-                            <LoginPage onLogin={handleLogin} />
+                            <LoginPage onLogin={handleLogin} authService={authService} />
                         )
                     }
                 />

@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/register.css'
+import authService from '../service/authService';
+import AuthService from '../service/authService';
 
-const RegisterPage: React.FC = () => {
+interface RegisterPageProps {
+  authService: AuthService;
+}
+
+const RegisterPage: React.FC<RegisterPageProps> = ({ authService }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
@@ -15,14 +21,7 @@ const RegisterPage: React.FC = () => {
     setError('');
     setSuccess('');
     try {
-      const response = await fetch('https://car-dealership-app-production.up.railway.app/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, role }),
-      });
-      if (!response.ok) {
-        throw new Error('Registration failed');
-      }
+      await authService.register(username, password, role);
       setSuccess('Registration successful! You can now log in.');
       setTimeout(() => navigate('/'), 1500);
     } catch (err: any) {

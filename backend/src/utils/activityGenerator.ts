@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+/*import fetch from 'node-fetch';
 
 const BASE_URL = 'http://localhost:3000/api/auth/login';
 const USERNAME = 'Toni';
@@ -35,4 +35,4 @@ async function periodicLogin() {
 
 export function startLoginGenerator() {
     intervalId = setInterval(periodicLogin, INTERVAL_MS);
-}
+}*/

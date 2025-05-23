@@ -1,6 +1,11 @@
 import Car from '../model/Car'
 import { SortField, SortOrder } from '../model/Types';
 
+interface CarStats {
+    minPrice: number;
+    maxPrice: number;
+    avgPrice: number;
+}
 
 class CarService{
     private baseUrl: string;
@@ -86,6 +91,7 @@ class CarService{
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    //'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(car),
             });
@@ -113,6 +119,24 @@ class CarService{
             }
         } catch (error) {
             console.error('Error deleting car:', error);
+            throw error;
+        }
+    }
+
+    async getStats(): Promise<CarStats> {
+        try {
+            const response = await fetch(`${this.baseUrl}/stats`, {
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data: CarStats = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching car stats:', error);
             throw error;
         }
     }

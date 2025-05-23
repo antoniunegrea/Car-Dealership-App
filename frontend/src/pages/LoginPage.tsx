@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
+import authService, { User } from '../service/authService';
+import AuthService from '../service/authService';
 
 interface LoginPageProps {
-  onLogin: (token: string, user: { id: number; username: string; role: string }) => void;
+  onLogin: (token: string, user: User) => void;
+  authService: AuthService;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin, authService }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,15 +19,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     e.preventDefault();
     setError('');
     try {
-      const response = await fetch('https://car-dealership-app-production.up.railway.app/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!response.ok) {
-        throw new Error('Invalid credentials');
-      }
-      const data = await response.json();
+      const data = await authService.login(username, password);
       onLogin(data.token, data.user);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import AppDataSource from '../config/database';
 import { Car } from '../model/Car';
-import { Like, Between, FindOptionsWhere } from 'typeorm';
+import { Like, Between, FindOptionsWhere, Brackets } from 'typeorm';
 import { logUserAction } from '../utils/logService';
 
 const carRepository = AppDataSource.getRepository(Car);
@@ -41,13 +41,12 @@ export class CarController {
 
             if (searchTerm) {
                 const search = `%${searchTerm}%`;
-                query.andWhere(
-                    `(LOWER(car.manufacturer) LIKE LOWER(:search)
-                    OR LOWER(car.model) LIKE LOWER(:search)
-                    OR CAST(car.year AS TEXT) LIKE :search
-                    OR CAST(car.price AS TEXT) LIKE :search)`,
-                    { search }
-                );
+                query.andWhere(new Brackets(qb => {
+                    qb.where('LOWER(car.manufacturer) LIKE LOWER(:search)', { search })
+                      .orWhere('LOWER(car.model) LIKE LOWER(:search)', { search })
+                      .orWhere('CAST(car.year AS TEXT) LIKE :search', { search })
+                      .orWhere('CAST(car.price AS TEXT) LIKE :search', { search });
+                }));
             }
 
             if (manufacturer) {
@@ -149,5 +148,34 @@ export class CarController {
         } catch (error) {
             res.status(500).json({ error: 'Error deleting car' });
         }
-    }  
+    }
+
+    public async getStats(req: Request, res: Response): Promise<void> {
+        try {
+            const cars = await carRepository.find();
+            
+            if (cars.length === 0) {
+                res.json({
+                    minPrice: 0,
+                    maxPrice: 0,
+                    avgPrice: 0
+                });
+                return;
+            }
+
+            const prices = cars.map(car => car.price);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const avgPrice = Math.floor(prices.reduce((sum, price) => sum + price, 0) / prices.length);
+
+            res.json({
+                minPrice,
+                maxPrice,
+                avgPrice
+            });
+        } catch (error) {
+            console.error('Error getting car stats:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
 } 

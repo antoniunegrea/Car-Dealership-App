@@ -4,6 +4,7 @@ import Car from '../model/Car'
 import {SortField, SortOrder} from '../model/Types'
 import SortingComponent from '../components/SortingComponent';
 import '../styles/index.css'
+import CarService from '../service/carService';
 
 interface IndexProps{
     cars: Car[];
@@ -15,10 +16,10 @@ interface IndexProps{
     searchTerm: string;
     setSearchTerm: (searchTerm: string) => void;
     isServerOnline: boolean;
+    carService: CarService;
 }
 
-
-const Index: React.FC<IndexProps> = ({ cars, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline}) => {
+const Index: React.FC<IndexProps> = ({ cars, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline, carService}) => {
     return (
         <div className='components-container'>
             <HeaderComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
@@ -46,7 +47,7 @@ const Index: React.FC<IndexProps> = ({ cars, handleDelete, sortField, setSortFie
                     setSortOrder(order);
                     }}
                 />
-                <CarListComponent cars={cars} onDelete={handleDelete}/>
+                <CarListComponent cars={cars} onDelete={handleDelete} carService={carService}/>
             </div>
         </div>
     );
