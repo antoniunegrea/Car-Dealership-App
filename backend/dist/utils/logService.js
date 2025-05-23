@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logUserAction = logUserAction;
-// backend/src/utils/logService.ts
 const database_1 = __importDefault(require("../config/database"));
 const UserLog_1 = __importDefault(require("../model/UserLog"));
 function logUserAction(user, actionType, details) {

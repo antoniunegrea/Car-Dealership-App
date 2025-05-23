@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Index from './pages/Index';
 import AddCarPage from './pages/AddCarPage';
@@ -43,7 +43,6 @@ function App() {
     const [searchTermDealerships, setSearchTermDealerships] = useState('');
     const [selectedDealershipId, setSelectedDealershipId] = useState<number | null>(null);
     const [isServerOnline, setIsServerOnline] = useState<boolean>(true);
-    const wsRef = useRef<WebSocket | null>(null);
     const [queuedOperations, setQueuedOperations] = useState<QueuedOperation[]>(() => {
         // Load queued operations from localStorage on mount
         const saved = localStorage.getItem('queuedOperations');

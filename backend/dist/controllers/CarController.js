@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CarController = void 0;
 const database_1 = __importDefault(require("../config/database"));
 const Car_1 = require("../model/Car");
+const typeorm_1 = require("typeorm");
 const logService_1 = require("../utils/logService");
 const carRepository = database_1.default.getRepository(Car_1.Car);
 class CarController {
@@ -44,10 +45,12 @@ class CarController {
                     .leftJoinAndSelect('car.dealership', 'dealership');
                 if (searchTerm) {
                     const search = `%${searchTerm}%`;
-                    query.andWhere(`(LOWER(car.manufacturer) LIKE LOWER(:search)
-                    OR LOWER(car.model) LIKE LOWER(:search)
-                    OR CAST(car.year AS TEXT) LIKE :search
-                    OR CAST(car.price AS TEXT) LIKE :search)`, { search });
+                    query.andWhere(new typeorm_1.Brackets(qb => {
+                        qb.where('LOWER(car.manufacturer) LIKE LOWER(:search)', { search })
+                            .orWhere('LOWER(car.model) LIKE LOWER(:search)', { search })
+                            .orWhere('CAST(car.year AS TEXT) LIKE :search', { search })
+                            .orWhere('CAST(car.price AS TEXT) LIKE :search', { search });
+                    }));
                 }
                 if (manufacturer) {
                     query.andWhere('LOWER(car.manufacturer) LIKE LOWER(:manufacturer)', { manufacturer: `%${manufacturer}%` });
@@ -134,6 +137,34 @@ class CarController {
             }
             catch (error) {
                 res.status(500).json({ error: 'Error deleting car' });
+            }
+        });
+    }
+    getStats(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const cars = yield carRepository.find();
+                if (cars.length === 0) {
+                    res.json({
+                        minPrice: 0,
+                        maxPrice: 0,
+                        avgPrice: 0
+                    });
+                    return;
+                }
+                const prices = cars.map(car => car.price);
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                const avgPrice = minPrice + maxPrice / 2;
+                res.json({
+                    minPrice,
+                    maxPrice,
+                    avgPrice,
+                });
+            }
+            catch (error) {
+                console.error('Error getting car stats:', error);
+                res.status(500).json({ message: 'Internal Server Error' });
             }
         });
     }

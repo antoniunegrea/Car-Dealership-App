@@ -41,7 +41,7 @@ const AdminMonitoredUsers: React.FC<AdminMonitoredUsersProps> = ({ adminService 
       }
     };
     fetchMonitoredUsers();
-  }, []);
+  }, [adminService]);
 
   return (
     <div style={{ maxWidth: 900, margin: '40px auto', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #ccc', padding: 32 }}>

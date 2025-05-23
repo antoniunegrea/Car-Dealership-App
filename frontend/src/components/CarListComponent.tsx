@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Car from '../model/Car';
 import CarService from '../service/CarService';
 import '../styles/carList.css'
-import { stat } from 'fs';
 
 interface CarListProps {
     cars: Car[];

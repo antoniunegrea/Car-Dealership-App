@@ -17,8 +17,8 @@ const database_1 = __importDefault(require("../config/database"));
 const UserLog_1 = __importDefault(require("../model/UserLog"));
 const User_1 = __importDefault(require("../model/User"));
 const UserMonitoring_1 = __importDefault(require("../model/UserMonitoring"));
-const ACTION_LIMIT = 9; // X actions
-const INTERVAL_MINUTES = 3 * 60 * 1000; // 100 * 60,000ms = 5 minutes
+const ACTION_LIMIT = 5; // 5 actions
+const INTERVAL_MINUTES = 2 * 60 * 1000; // last 2 minutes
 function checkUserActions() {
     return __awaiter(this, void 0, void 0, function* () {
         const userLogRepo = database_1.default.getRepository(UserLog_1.default);

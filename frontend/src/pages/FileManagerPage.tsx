@@ -24,7 +24,7 @@ const FileManagerPage: React.FC<FileManagerPageProps> = ({ fileService }) => {
             }
         };
         fetchFiles();
-    }, []);
+    }, [fileService]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
