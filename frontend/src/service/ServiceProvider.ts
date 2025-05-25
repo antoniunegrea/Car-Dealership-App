@@ -4,6 +4,7 @@ import DealershipService from './DealershipService';
 import AdminService from './AdminService';
 import { AuthService } from './AuthService';
 import { FileService } from './FileService';
+import { SessionService } from './SessionService';
 
 export default class ServiceProvider {
     private static instance: ServiceProvider;
@@ -15,13 +16,15 @@ export default class ServiceProvider {
     }
 
     private initializeServices() {
-        const baseUrl = 'https://car-dealership-app-production.up.railway.app/api';
+        //const baseUrl = 'https://car-dealership-app-production.up.railway.app/api';
+        const baseUrl = 'http://localhost:3000/api';
         this.services.set('car', new CarService(`${baseUrl}/cars`));
         this.services.set('server', new ServerService(`${baseUrl}`));
         this.services.set('dealership', new DealershipService(`${baseUrl}/dealerships`));
         this.services.set('admin', new AdminService(`${baseUrl}/admin`));
-        this.services.set('auth', new AuthService(`${baseUrl}/auth`));
+        this.services.set('auth', new AuthService(`${baseUrl}/auth`, new SessionService(`${baseUrl}/sessions`)));
         this.services.set('file', new FileService(`${baseUrl}/files`));
+        this.services.set('session', new SessionService(`${baseUrl}/sessions`));
     }
 
     public static getInstance(): ServiceProvider {

@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import User from '../model/User';
 import UserLog from '../model/UserLog';
 import UserMonitoring from '../model/UserMonitoring';
+import Session from '../model/Session';
 
 dotenv.config();
 
@@ -18,8 +19,10 @@ const AppDataSource = new DataSource({
     url: databaseUrl,
     synchronize: false,
     logging: true,
-    entities: [Car, Dealership, User, UserLog, UserMonitoring],
+    entities: [Car, Dealership, User, UserLog, UserMonitoring, Session],
     //migrations: ['dist/migrations/*.js'],
+    //migrations: ['src/migrations/*.ts'],
+    migrations: ['src/migrations/*.ts'],
     migrationsTableName: 'migrations',
     subscribers: [],
 });

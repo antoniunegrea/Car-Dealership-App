@@ -29,8 +29,6 @@ const CarListComponent: React.FC<CarListProps> = ({ cars, onDelete, carService }
                     maxPrice: statsData.maxPrice,
                     avgPrice: statsData.avgPrice
                 });
-                // log the stats
-                console.log("avgPrice: " + statsData.avgPrice);
             } catch (error) {
                 console.error('Failed to fetch car stats:', error);
             }

@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm';
 import UserMonitoring from './UserMonitoring'; // import the new entity
+import Session from './Session';
 
 @Entity('users')
 export default class User {
@@ -17,4 +18,7 @@ export default class User {
 
     @OneToOne(() => UserMonitoring, monitoring => monitoring.user)
     monitoring: UserMonitoring;
+
+    @OneToMany(() => Session, session => session.user)
+    sessions: Session[];
 }

@@ -6,59 +6,67 @@ interface HeaderProps {
     setSearchTerm: (searchTerm: string) => void;
 }
 
-const HeaderComponent : React.FC<HeaderProps> = ({searchTerm, setSearchTerm}) =>{
+const HeaderComponent: React.FC<HeaderProps> = ({ searchTerm, setSearchTerm }) => {
     const navigate = useNavigate();
     
-    console.log("HeaderComponent rendered with searchTerm:", searchTerm);
-
     const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
 
     const handleAddButtonClick = () => {
         navigate('/cars/add');
     }
 
-    const handleChartsButtonClick = () =>{
+    const handleChartsButtonClick = () => {
         navigate('/charts');
     }
 
-    const handleFilesButtonClick = () =>{
+    const handleFilesButtonClick = () => {
         navigate('/files');
     }
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("Search input changed to:", e.target.value);
         setSearchTerm(e.target.value);
     };
 
-    const handleDealershipsButtonClick = () =>{
+    const handleDealershipsButtonClick = () => {
         navigate('/dealerships');
     }
 
     return (
         <div className="header">
             <div className="title">
-                Car Dealership
+                🚗 Car Dealership
             </div>
             <div className="search-bar-container">
-                <input
-                type="text"
-                placeholder="Search..."
-                className="search-bar"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                />
-                <button className='add-button' onClick={handleAddButtonClick}>Add Car</button>
-                <button className='charts-button' onClick={handleChartsButtonClick}>Charts</button>
-                <button className='files-button' onClick={handleFilesButtonClick}>Files</button>
-                <button className='dealerships-button' onClick={handleDealershipsButtonClick}>Dealerships</button>
+                <div className="search-wrapper">
+                    <input
+                        type="text"
+                        placeholder="Search cars..."
+                        className="search-bar"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                    <span className="search-icon">🔍</span>
+                </div>
+                <button className='add-button' onClick={handleAddButtonClick}>
+                    <span className="button-icon">➕</span> Add Car
+                </button>
+                <button className='charts-button' onClick={handleChartsButtonClick}>
+                    <span className="button-icon">📊</span> Charts
+                </button>
+                <button className='files-button' onClick={handleFilesButtonClick}>
+                    <span className="button-icon">📁</span> Files
+                </button>
+                <button className='dealerships-button' onClick={handleDealershipsButtonClick}>
+                    <span className="button-icon">🏢</span> Dealerships
+                </button>
                 {user && user.role === 'admin' && (
-                    <button className='admin-dashboard-button' onClick={() => navigate('/admin/monitored-users')}>Dashboard</button>
+                    <button className='admin-dashboard-button' onClick={() => navigate('/admin/monitored-users')}>
+                        <span className="button-icon">👨‍💼</span> Dashboard
+                    </button>
                 )}
             </div>
-            
         </div>
     );
-
 };
 
 export default HeaderComponent;

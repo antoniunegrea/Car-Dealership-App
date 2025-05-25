@@ -19,7 +19,6 @@ const EditDealershipPage: React.FC<EditDealershipProps> = ( {dealerships, onEdit
 
     useEffect(() => {
         if (dealershipToEdit) {
-            console.log("Setting dealership values from:", dealershipToEdit);
             setName(dealershipToEdit.name);
             setLocation(dealershipToEdit.location);
             setContact(dealershipToEdit.contact);
@@ -33,8 +32,6 @@ const EditDealershipPage: React.FC<EditDealershipProps> = ( {dealerships, onEdit
     if (!dealershipToEdit) {
       return <div>Dealership not found</div>;
     }
-
-    console.log("dealership"+ dealershipToEdit.name + " " + dealershipToEdit.location + " " + dealershipToEdit.contact);
 
     const handleGoBack = () => {
         navigate('/dealerships');

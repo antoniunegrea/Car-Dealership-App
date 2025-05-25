@@ -25,11 +25,6 @@ class CarService{
                 if (params.selectedDealershipId) query.append('selectedDealershipId', params.selectedDealershipId.toString());
                 url += `?${query.toString()}`;
             }
-            console.log("Making request to URL:", url);
-            console.log("Search term:", params?.searchTerm);
-            console.log("Sort by:", params?.sortBy);
-            console.log("Order:", params?.order);
-            console.log("Selected dealership ID:", params?.selectedDealershipId);
             
             const response = await fetch(url, {
                 method: 'GET',
@@ -40,7 +35,6 @@ class CarService{
             }
 
             const data: Car[] = await response.json();
-            console.log("Received data:", data);
             return data;
         } catch (error) {
             console.error('Error fetching cars:', error);

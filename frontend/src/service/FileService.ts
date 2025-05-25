@@ -7,9 +7,6 @@ export interface UploadedFile {
 }
 
 export class FileService extends BaseService {
-    constructor(baseUrl: string) {
-        super(baseUrl);
-    }
 
     async getAllFiles(): Promise<UploadedFile[]> {
         const response = await this.axiosInstance.get('/all');
