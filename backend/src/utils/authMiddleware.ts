@@ -6,18 +6,20 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
-        res.status(401).json({ error: 'No token provided' });
+    // Check header presence and format
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        res.status(401).json({ error: 'Authorization header missing or malformed' });
         return;
     }
 
-    const token = authHeader.split(' ')[1]; // Bearer TOKEN
+    const token = authHeader.split(' ')[1];
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        (req as any).user = decoded;
+        (req as any).user = decoded; // Attach decoded user info to request
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
+        console.error('Token verification failed:', error);
+        res.status(401).json({ error: 'Invalid or expired token' });
     }
-} 
+}

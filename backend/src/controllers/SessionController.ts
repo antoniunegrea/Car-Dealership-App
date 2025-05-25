@@ -18,6 +18,7 @@ export class SessionController {
         const { token, deviceInfo } = req.body;
         const userId = (req as any).user.id;
 
+        console.log('>>> createSession HIT');
         try {
             const user = await userRepo.findOne({ where: { id: userId } });
             if (!user) {
