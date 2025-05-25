@@ -45,7 +45,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ authService }) => {
     return (
         <div className="login-container">
             <form className="login-form" onSubmit={handleSubmit}>
-                <h2 className="login-title">🚗 Create Account</h2>
+                <h2 className="login-title">Create Account</h2>
                 
                 {error && (
                     <div className="error-message">

@@ -34,7 +34,7 @@ const HeaderComponentDealerships: React.FC<HeaderProps> = ({ searchTerm, setSear
     return (
         <div className="header">
             <div className="title">
-                🏢 Dealerships
+                Dealerships
             </div>
             <div className="search-bar-container">
                 <div className="search-wrapper">
@@ -48,20 +48,20 @@ const HeaderComponentDealerships: React.FC<HeaderProps> = ({ searchTerm, setSear
                     <span className="search-icon">🔍</span>
                 </div>
                 <button className='add-button' onClick={handleAddButtonClick}>
-                    <span className="button-icon">➕</span> Add
+                    <span className="button-icon"></span>Add
                 </button>
                 <button className='charts-button' onClick={handleChartsButtonClick}>
-                    <span className="button-icon">📊</span> Charts
+                    <span className="button-icon"></span>Charts
                 </button>
                 <button className='files-button' onClick={handleFilesButtonClick}>
-                    <span className="button-icon">📁</span> Files
+                    <span className="button-icon"></span>Files
                 </button>
                 <button className='cars-button' onClick={handleCarsButtonClick}>
-                    <span className="button-icon">🚗</span> Cars
+                    <span className="button-icon"></span>Cars
                 </button>
                 {user && user.role === 'admin' && (
                     <button className='admin-dashboard-button' onClick={() => navigate('/admin/monitored-users')}>
-                        <span className="button-icon">👨‍💼</span> Dashboard
+                        <span className="button-icon"></span>Dashboard
                     </button>
                 )}
             </div>

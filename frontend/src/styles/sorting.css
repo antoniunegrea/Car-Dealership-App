@@ -2,13 +2,91 @@
 {
     display: flex;
     align-items: center;
-    margin: 20px 0;
-    gap: 10px
+    gap: 15px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin: 20px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    position: relative;
+    overflow: hidden;
 }
 
-.select-field, .select-order{
-    height: 30px;
-    width: 100px;
-    border-radius: 6px;
-    margin-right: 10px;
+.main-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+    opacity: 0.7;
+}
+
+.main-container span {
+    color: #4f46e5;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.select-field, .select-order {
+    padding: 8px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #475569;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 35px;
+}
+
+.select-field:hover, .select-order:hover {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.select-field:focus, .select-order:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.select-field option, .select-order option {
+    padding: 8px;
+    background-color: white;
+    color: #475569;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .select-field, .select-order {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        margin: 10px;
+        padding: 12px;
+    }
+
+    .main-container span {
+        font-size: 0.9rem;
+    }
 }

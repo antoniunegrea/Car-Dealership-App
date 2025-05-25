@@ -1,4 +1,4 @@
-.car-list {
+.dealership-list {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -9,22 +9,21 @@
     min-height: 100vh;
 }
 
-.car-item {
+.dealership-item {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
-    display: grid;
-    grid-template-columns: auto 1fr auto auto;
-    gap: 20px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     border: 1px solid rgba(226, 232, 240, 0.8);
     position: relative;
     overflow: hidden;
 }
 
-.car-item::before {
+.dealership-item::before {
     content: '';
     position: absolute;
     top: 0;
@@ -36,85 +35,63 @@
     transition: opacity 0.3s ease;
 }
 
-.car-item:hover {
+.dealership-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(99, 102, 241, 0.1);
 }
 
-.car-item:hover::before {
+.dealership-item:hover::before {
     opacity: 1;
 }
 
-.car-image {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+.dealership-info {
+    flex: 1;
 }
 
-.car-item:hover .car-image {
-    transform: scale(1.05);
-}
-
-.car-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.car-info h3 {
+.dealership-info h3 {
     color: #4f46e5;
     font-size: 1.4rem;
     font-weight: 600;
-    margin: 0;
+    margin: 0 0 10px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.car-info p {
+.dealership-info h3:hover {
+    transform: translateX(5px);
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dealership-info p {
     color: #64748b;
-    margin: 0;
+    margin: 5px 0;
     font-size: 0.95rem;
     display: flex;
     align-items: center;
     gap: 8px;
+    transition: color 0.3s ease;
 }
 
-.statistics {
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-align: center;
-    transition: all 0.3s ease;
-    min-width: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.dealership-info p:hover {
+    color: #475569;
 }
 
-.statistics[style*="lightcoral"] {
-    background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
-    color: #991b1b;
-}
-
-.statistics[style*="lightgreen"] {
-    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-    color: #166534;
-}
-
-.statistics[style*="lightblue"] {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    color: #1e40af;
+.dealership-info p:first-of-type {
+    margin-top: 10px;
 }
 
 .car-actions {
     display: flex;
     gap: 10px;
+    margin-left: 20px;
 }
 
 .edit-btn, .delete-btn {
@@ -129,6 +106,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .edit-btn {
@@ -158,78 +137,31 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-    .car-item {
-        grid-template-columns: auto 1fr;
-        grid-template-areas: 
-            "image info"
-            "image stats"
-            "actions actions";
-    }
-
-    .car-image {
-        grid-area: image;
-    }
-
-    .car-info {
-        grid-area: info;
-    }
-
-    .statistics {
-        grid-area: stats;
-        justify-self: start;
+@media (max-width: 768px) {
+    .dealership-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
     }
 
     .car-actions {
-        grid-area: actions;
+        margin-left: 0;
+        width: 100%;
         justify-content: flex-end;
     }
-}
 
-@media (max-width: 768px) {
-    .car-item {
-        grid-template-columns: 1fr;
-        grid-template-areas: 
-            "image"
-            "info"
-            "stats"
-            "actions";
-        text-align: center;
-    }
-
-    .car-image {
-        margin: 0 auto;
-    }
-
-    .car-info {
-        align-items: center;
-    }
-
-    .statistics {
-        margin: 0 auto;
-    }
-
-    .car-actions {
-        justify-content: center;
+    .dealership-info h3 {
+        font-size: 1.2rem;
     }
 }
 
 @media (max-width: 480px) {
-    .car-list {
+    .dealership-list {
         padding: 10px;
     }
 
-    .car-item {
+    .dealership-item {
         padding: 15px;
-    }
-
-    .car-image {
-        width: 100px;
-        height: 100px;
-    }
-
-    .car-info h3 {
-        font-size: 1.2rem;
     }
 
     .car-actions {
@@ -240,4 +172,4 @@
     .edit-btn, .delete-btn {
         width: 100%;
     }
-}
+} 

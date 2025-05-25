@@ -9,7 +9,7 @@ import Car from './model/Car';
 import CarService from './service/CarService';
 import ServerService from './service/ServerService';
 import DealershipService from './service/DealershipService';
-import { SortField, SortOrder } from './model/Types';
+import { QueuedOperation, SortField, SortOrder } from './model/Types';
 import Dealerships from './pages/Dealerships';
 import Dealership from './model/Dealership';
 import './App.css';
@@ -24,13 +24,8 @@ import { AuthService } from './service/AuthService';
 import { FileService } from './service/FileService';
 import ServiceProvider from './service/ServiceProvider';
 import { SessionService } from './service/SessionService';
-type OperationType = 'add' | 'update' | 'delete';
+import { OperationType } from './model/Types';
 
-interface QueuedOperation {
-    type: OperationType;
-    data: Omit<Car, 'id'> | Car | number;
-    timestamp: number;
-}
 
 function App() {
     const [cars, setCars] = useState<Car[]>([]);
@@ -194,18 +189,30 @@ function App() {
         const operations = [...queuedOperations].sort((a, b) => a.timestamp - b.timestamp);
         for (const operation of operations) {
             try {
-                if (operation.type === 'add') {
+                if (operation.type === 'addCar') {
                     const newCar = operation.data as Omit<Car, 'id'>;
                     const addedCar = await carService.add(newCar, auth.token ?? '');
                     setCars((prev) => [...prev.filter(c => c.id !== (newCar as any).tempId), addedCar]);
-                } else if (operation.type === 'update') {
+                } else if (operation.type === 'updateCar') {
                     const car = operation.data as Car;
                     const updatedCar = await carService.update(car.id, car, auth.token ?? '');
                     setCars((prev) => prev.map(c => c.id === car.id ? updatedCar : c));
-                } else if (operation.type === 'delete') {
+                } else if (operation.type === 'deleteCar') {
                     const id = operation.data as number;
                     await carService.delete(id, auth.token ?? '');
                     setCars((prev) => prev.filter(c => c.id !== id));
+                } else if (operation.type === 'addDealership') {
+                    const newDealership = operation.data as Omit<Dealership, 'id' | 'cars'>;
+                    const addedDealership = await dealershipService.add(newDealership, auth.token ?? '');
+                    setDealerships((prev) => [...prev, addedDealership]);
+                } else if (operation.type === 'updateDealership') {
+                    const dealership = operation.data as Dealership;
+                    const updatedDealership = await dealershipService.update(dealership.id, dealership, auth.token ?? '');
+                    setDealerships((prev) => prev.map(d => d.id === dealership.id ? updatedDealership : d));
+                } else if (operation.type === 'deleteDealership') {
+                    const id = operation.data as number;
+                    await dealershipService.delete(id, auth.token ?? '');
+                    setDealerships((prev) => prev.filter(d => d.id !== id));
                 }
             } catch (error) {
                 return;
@@ -213,7 +220,7 @@ function App() {
         }
         setQueuedOperations([]);
         localStorage.removeItem('queuedOperations');
-    }, [queuedOperations, carService]);
+    }, [queuedOperations, carService, dealershipService]);
 
     useEffect(() => {
         const checkServerStatus = async () => {
@@ -236,7 +243,7 @@ function App() {
             setCars((prev) => [...prev, carWithTempId]);
             setQueuedOperations((prev) => [
                 ...prev,
-                { type: 'add', data: newCar, timestamp: Date.now() }
+                { type: 'addCar', data: newCar, timestamp: Date.now() }
             ]);
             window.alert('Server is offline. Car addition queued and will sync when the server is back online.');
             return;
@@ -263,7 +270,7 @@ function App() {
             setCars((prev) => prev.map(c => c.id === car.id ? car : c));
             setQueuedOperations((prev) => [
                 ...prev,
-                { type: 'update', data: car, timestamp: Date.now() }
+                { type: 'updateCar', data: car, timestamp: Date.now() }
             ]);
             window.alert('Server is offline. Car update queued and will sync when the server is back online.');
             return;
@@ -291,7 +298,7 @@ function App() {
             setCars((prev) => prev.filter(c => c.id !== id));
             setQueuedOperations((prev) => [
                 ...prev,
-                { type: 'delete', data: id, timestamp: Date.now() }
+                { type: 'deleteCar', data: id, timestamp: Date.now() }
             ]);
             window.alert('Server is offline. Car deletion queued and will sync when the server is back online.');
             return;
@@ -310,7 +317,12 @@ function App() {
     const handleDeleteDealership = async (id: number) => {
         if (!isServerOnline) {
             // Server is offline, queue the operation
-            // TODO: Implement
+            setDealerships((prev) => prev.filter((d) => d.id !== id));
+            setQueuedOperations((prev) => [
+                ...prev,
+                { type: 'deleteDealership', data: id, timestamp: Date.now() }
+            ]);
+            window.alert('Server is offline. Dealership deletion queued and will sync when the server is back online.');
             return;
         }
 
@@ -327,7 +339,14 @@ function App() {
     const handleAddDealership = async (newDealership: Omit<Dealership, 'id' | 'cars'>) => {
         if (!isServerOnline) {
             // Server is offline, queue the operation
-            // TODO: Implement
+            const tempId = 0;
+            const dealershipWithTempId = { ...newDealership, id: tempId } as Dealership;
+            setDealerships((prev) => [...prev, dealershipWithTempId]);
+            setQueuedOperations((prev) => [
+                ...prev,
+                { type: 'addDealership', data: newDealership, timestamp: Date.now() }
+            ]);
+            window.alert('Server is offline. Dealership addition queued and will sync when the server is back online.');
             return;
         }
 
@@ -344,7 +363,12 @@ function App() {
     const handleEditDealership = async (dealership: Dealership) => {
         if (!isServerOnline) {
             // Server is offline, queue the operation
-            // TODO: Implement
+            setDealerships((prev) => prev.map(d => d.id === dealership.id ? dealership : d));
+            setQueuedOperations((prev) => [
+                ...prev,
+                { type: 'updateDealership', data: dealership, timestamp: Date.now() }
+            ]);
+            window.alert('Server is offline. Dealership update queued and will sync when the server is back online.');
             return;
         }
 
@@ -378,11 +402,10 @@ function App() {
                     {auth.user ? (
                         <div className="user-info">
                             <span>
-                                <span className="username">👤 {auth.user.username}</span>
+                                <span className="username">{auth.user.username}</span>
                                 <span className="role">{auth.user.role}</span>
                             </span>
                             <button className="logout-button" onClick={handleLogout}>
-                                <span>🚪</span>
                                 Logout
                             </button>
                         </div>

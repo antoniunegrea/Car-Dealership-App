@@ -92,8 +92,20 @@ const CarListComponent: React.FC<CarListProps> = ({ cars, onDelete, carService }
                             ''}
                     </div>   
                     <div className="car-actions">
-                        <button onClick={() => navigate(`/cars/edit/${car.id}`)} className="edit-btn">Edit</button>
-                        <button onClick={() => handleDelete(car.id)} className="delete-btn">Delete</button>
+                        <button 
+                            onClick={() => navigate(`/cars/edit/${car.id}`)} 
+                            className="edit-btn"
+                            aria-label={`Edit ${car.manufacturer} ${car.model}`}
+                        >
+                            Edit
+                        </button>
+                        <button 
+                            onClick={() => handleDelete(car.id)} 
+                            className="delete-btn"
+                            aria-label={`Delete ${car.manufacturer} ${car.model}`}
+                        >
+                            Delete
+                        </button>
                     </div>
                 </div>
             ))}

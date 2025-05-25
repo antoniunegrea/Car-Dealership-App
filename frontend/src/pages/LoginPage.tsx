@@ -36,7 +36,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, authService, sessionServ
     return (
         <div className="login-container">
             <form className="login-form" onSubmit={handleSubmit}>
-                <h2 className="login-title">🚗 Welcome Back</h2>
+                <h2 className="login-title">Welcome Back</h2>
                 
                 {error && (
                     <div className="error-message">

@@ -26,21 +26,11 @@ const Dealerships: React.FC<DealershipsProps> = ({ dealerships, handleDelete, so
         <div className='components-container'>
             <HeaderComponentDealerships searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
             <div className='body-container'>
-                <div
-                    className='server-status'
-                    style={{
-                        backgroundColor: isServerOnline ? 'transparent' : 'red',
-                        height: isServerOnline? '0px' : '50px',
-                        alignContent: 'center',
-                        color: 'white',
-                        textAlign: 'center',
-                        marginBottom: '10px',
-                        borderRadius: '4px',
-                        transition: 'all 0.3s ease',
-                    }}
-                    >
-                    {!isServerOnline && 'Server is offline'}
-                </div>
+                {!isServerOnline && (
+                    <div className='server-status'>
+                        Server is offline
+                    </div>
+                )}
                 <SortingDealershipComponent
                     sortField={sortField}
                     sortOrder={sortOrder}

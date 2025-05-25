@@ -6,7 +6,7 @@ import SortingComponent from '../components/SortingComponent';
 import '../styles/index.css'
 import CarService from '../service/CarService';
 
-interface IndexProps{
+interface IndexProps {
     cars: Car[];
     handleDelete: (id: number) => void;
     sortField: SortField;
@@ -19,35 +19,40 @@ interface IndexProps{
     carService: CarService;
 }
 
-const Index: React.FC<IndexProps> = ({ cars, handleDelete, sortField, setSortField, sortOrder, setSortOrder, searchTerm, setSearchTerm, isServerOnline, carService}) => {
+const Index: React.FC<IndexProps> = ({ 
+    cars, 
+    handleDelete, 
+    sortField, 
+    setSortField, 
+    sortOrder, 
+    setSortOrder, 
+    searchTerm, 
+    setSearchTerm, 
+    isServerOnline, 
+    carService
+}) => {
     return (
         <div className='components-container'>
             <HeaderComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
             <div className='body-container'>
-                <div
-                    className='server-status'
-                    style={{
-                        backgroundColor: isServerOnline ? 'transparent' : 'red',
-                        height: isServerOnline? '0px' : '50px',
-                        alignContent: 'center',
-                        color: 'white',
-                        textAlign: 'center',
-                        marginBottom: '10px',
-                        borderRadius: '4px',
-                        transition: 'all 0.3s ease',
-                    }}
-                    >
-                    {!isServerOnline && 'Server is offline'}
-                </div>
+                {!isServerOnline && (
+                    <div className='server-status'>
+                        Server is offline
+                    </div>
+                )}
                 <SortingComponent
                     sortField={sortField}
                     sortOrder={sortOrder}
                     onSortChange={(field, order) => {
-                    setSortField(field);
-                    setSortOrder(order);
+                        setSortField(field);
+                        setSortOrder(order);
                     }}
                 />
-                <CarListComponent cars={cars} onDelete={handleDelete} carService={carService}/>
+                <CarListComponent 
+                    cars={cars} 
+                    onDelete={handleDelete} 
+                    carService={carService}
+                />
             </div>
         </div>
     );

@@ -34,7 +34,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({ searchTerm, setSearchTerm }) =
     return (
         <div className="header">
             <div className="title">
-                🚗 Car Dealership
+                Car Dealership
             </div>
             <div className="search-bar-container">
                 <div className="search-wrapper">
@@ -48,20 +48,20 @@ const HeaderComponent: React.FC<HeaderProps> = ({ searchTerm, setSearchTerm }) =
                     <span className="search-icon">🔍</span>
                 </div>
                 <button className='add-button' onClick={handleAddButtonClick}>
-                    <span className="button-icon">➕</span> Add Car
+                    <span className="button-icon"></span>Add Car
                 </button>
                 <button className='charts-button' onClick={handleChartsButtonClick}>
-                    <span className="button-icon">📊</span> Charts
+                    <span className="button-icon"></span>Charts
                 </button>
                 <button className='files-button' onClick={handleFilesButtonClick}>
-                    <span className="button-icon">📁</span> Files
+                    <span className="button-icon"></span>Files
                 </button>
                 <button className='dealerships-button' onClick={handleDealershipsButtonClick}>
-                    <span className="button-icon">🏢</span> Dealerships
+                    <span className="button-icon"></span>Dealerships
                 </button>
                 {user && user.role === 'admin' && (
                     <button className='admin-dashboard-button' onClick={() => navigate('/admin/monitored-users')}>
-                        <span className="button-icon">👨‍💼</span> Dashboard
+                        <span className="button-icon"></span>Dashboard
                     </button>
                 )}
             </div>

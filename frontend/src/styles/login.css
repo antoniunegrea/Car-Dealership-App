@@ -96,6 +96,9 @@
   margin-top: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-button:hover {
@@ -283,8 +286,9 @@
     font-weight: 500;
     transition: all 0.3s ease;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 8px;
+    min-width: 100px;
 }
 
 .logout-button:hover {
@@ -300,12 +304,5 @@
     color: #95a5a6;
     font-style: italic;
     font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.not-logged-in::before {
-    content: "👤";
 }
 
