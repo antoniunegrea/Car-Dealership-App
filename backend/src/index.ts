@@ -17,21 +17,16 @@ const PORT = process.env.PORT || 3000;
 const INTERVAL_MINUTES = 3 * 60 * 1000; // 3 minutes
 
 // Middleware
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3001',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/sessions', sessionRoutes);
 app.use('/api/cars', carRoutes);
 app.use('/api/dealerships', dealershipRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/sessions', sessionRoutes);
 app.use('/api', serverRoutes);
 
 // Initialize TypeORM connection
