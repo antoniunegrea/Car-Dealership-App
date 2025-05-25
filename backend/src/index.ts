@@ -24,9 +24,9 @@ app.use(express.json());
 app.use('/api/cars', carRoutes);
 app.use('/api/dealerships', dealershipRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/sessions', sessionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/sessions', sessionRoutes);
 app.use('/api', serverRoutes);
 
 // Initialize TypeORM connection
