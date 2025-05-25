@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import User from './User';
 
-@Entity()
+@Entity('session')
 export default class Session {
     @PrimaryGeneratedColumn()
     id: number;

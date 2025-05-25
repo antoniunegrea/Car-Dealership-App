@@ -15,13 +15,23 @@ const INACTIVITY_TIMEOUT = process.env.INACTIVITY_TIMEOUT ? parseInt(process.env
 export class SessionController {
     // Create a new session
     createSession = async (req: Request, res: Response): Promise<void> => {
-        const { token, deviceInfo } = req.body;
-        const userId = (req as any).user.id;
-
         console.log('>>> createSession HIT');
+        console.log('Request body:', req.body);
+        console.log('User from request:', (req as any).user);
+
+        const { token, deviceInfo } = req.body;
+        const userId = (req as any).user?.id;
+
+        if (!userId) {
+            console.error('No user ID found in request');
+            res.status(401).json({ error: 'User not authenticated' });
+            return;
+        }
+
         try {
             const user = await userRepo.findOne({ where: { id: userId } });
             if (!user) {
+                console.error('User not found:', userId);
                 res.status(404).json({ error: 'User not found' });
                 return;
             }
@@ -33,26 +43,33 @@ export class SessionController {
                 token,
                 deviceInfo,
                 isActive: true,
-                user: { id: userId }, // Only pass the user ID
+                user: { id: userId },
                 expiresAt,
                 lastActivity: new Date()
             });
 
+            console.log('Creating session:', session);
             const savedSession = await sessionRepo.save(session);
+            console.log('Session created successfully:', savedSession);
+
             await logUserAction(user, 'SESSION_CREATE', `New session created for user ${user.username}`);
             res.status(201).json(savedSession);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Session creation error:', error);
-            res.status(500).json({ error: 'Failed to create session' });
+            res.status(500).json({ error: 'Failed to create session', details: error.message });
         }
     };
 
     // Get all active sessions for the current user
     getUserSessions = async (req: Request, res: Response): Promise<void> => {
-        const userId = (req as any).user.id;
+        const userId = (req as any).user?.id;
+
+        if (!userId) {
+            res.status(401).json({ error: 'User not authenticated' });
+            return;
+        }
 
         try {
-            // First, check and invalidate expired sessions
             await this.checkAndInvalidateExpiredSessions(userId);
 
             const sessions = await sessionRepo.find({
@@ -60,15 +77,21 @@ export class SessionController {
                 order: { lastActivity: 'DESC' }
             });
             res.json(sessions);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to fetch sessions' });
+        } catch (error: any) {
+            console.error('Error fetching user sessions:', error);
+            res.status(500).json({ error: 'Failed to fetch sessions', details: error.message });
         }
     };
 
     // Invalidate a session (logout)
     invalidateSession = async (req: Request, res: Response): Promise<void> => {
         const { sessionId } = req.params;
-        const userId = (req as any).user.id;
+        const userId = (req as any).user?.id;
+
+        if (!userId) {
+            res.status(401).json({ error: 'User not authenticated' });
+            return;
+        }
 
         try {
             const session = await sessionRepo.findOne({
@@ -84,15 +107,21 @@ export class SessionController {
             await sessionRepo.save(session);
             await logUserAction(session.user, 'SESSION_INVALIDATE', `Session invalidated for user ${session.user.username}`);
             res.json({ message: 'Session invalidated successfully' });
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to invalidate session' });
+        } catch (error: any) {
+            console.error('Error invalidating session:', error);
+            res.status(500).json({ error: 'Failed to invalidate session', details: error.message });
         }
     };
 
     // Update session activity
     updateSessionActivity = async (req: Request, res: Response): Promise<void> => {
         const { sessionId } = req.params;
-        const userId = (req as any).user.id;
+        const userId = (req as any).user?.id;
+
+        if (!userId) {
+            res.status(401).json({ error: 'User not authenticated' });
+            return;
+        }
 
         try {
             const session = await sessionRepo.findOne({
@@ -104,7 +133,6 @@ export class SessionController {
                 return;
             }
 
-            // Check if session has expired
             if (new Date() > session.expiresAt) {
                 session.isActive = false;
                 await sessionRepo.save(session);
@@ -112,18 +140,16 @@ export class SessionController {
                 return;
             }
 
-            // Update last activity and extend session if needed
             session.lastActivity = new Date();
-            
-            // Extend session timeout if user is active
             const newExpiresAt = new Date();
             newExpiresAt.setMinutes(newExpiresAt.getMinutes() + SESSION_TIMEOUT);
             session.expiresAt = newExpiresAt;
 
             await sessionRepo.save(session);
             res.json({ message: 'Session activity updated' });
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to update session activity' });
+        } catch (error: any) {
+            console.error('Error updating session activity:', error);
+            res.status(500).json({ error: 'Failed to update session activity', details: error.message });
         }
     };
 
@@ -132,17 +158,21 @@ export class SessionController {
         const now = new Date();
         const inactiveThreshold = new Date(now.getTime() - (INACTIVITY_TIMEOUT * 60 * 1000));
 
-        const expiredSessions = await sessionRepo.find({
-            where: [
-                { user: { id: userId }, expiresAt: LessThan(now) },
-                { user: { id: userId }, lastActivity: LessThan(inactiveThreshold) }
-            ]
-        });
+        try {
+            const expiredSessions = await sessionRepo.find({
+                where: [
+                    { user: { id: userId }, expiresAt: LessThan(now) },
+                    { user: { id: userId }, lastActivity: LessThan(inactiveThreshold) }
+                ]
+            });
 
-        for (const session of expiredSessions) {
-            session.isActive = false;
-            await sessionRepo.save(session);
-            await logUserAction(session.user, 'SESSION_EXPIRED', `Session expired for user ${session.user.username}`);
+            for (const session of expiredSessions) {
+                session.isActive = false;
+                await sessionRepo.save(session);
+                await logUserAction(session.user, 'SESSION_EXPIRED', `Session expired for user ${session.user.username}`);
+            }
+        } catch (error: any) {
+            console.error('Error checking expired sessions:', error);
         }
     }
 } 
