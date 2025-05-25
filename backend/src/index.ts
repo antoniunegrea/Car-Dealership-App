@@ -16,8 +16,24 @@ const PORT = process.env.PORT || 3000;
 
 const INTERVAL_MINUTES = 3 * 60 * 1000; // 3 minutes
 
+// Detailed request logging middleware
+app.use((req, res, next) => {
+    console.log('=== Incoming Request ===');
+    console.log('Time:', new Date().toISOString());
+    console.log('Method:', req.method);
+    console.log('Path:', req.path);
+    console.log('Headers:', JSON.stringify(req.headers, null, 2));
+    console.log('Body:', JSON.stringify(req.body, null, 2));
+    console.log('=====================');
+    next();
+});
+
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: '*', // Allow all origins in production
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Debug middleware to log all requests
