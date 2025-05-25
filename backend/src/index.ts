@@ -20,6 +20,12 @@ const INTERVAL_MINUTES = 3 * 60 * 1000; // 3 minutes
 app.use(cors());
 app.use(express.json());
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+});
+
 // Routes
 app.use('/api/cars', carRoutes);
 app.use('/api/dealerships', dealershipRoutes);
@@ -29,6 +35,18 @@ app.use('/api/files', fileRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api', serverRoutes);
 
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('Error:', err);
+    res.status(500).json({ error: 'Internal server error', details: err.message });
+});
+
+// 404 handler
+app.use((req: express.Request, res: express.Response) => {
+    console.log('404 Not Found:', req.method, req.path);
+    res.status(404).json({ error: 'Not found', path: req.path });
+});
+
 // Initialize TypeORM connection
 AppDataSource.initialize()
     .then(() => {
@@ -37,6 +55,11 @@ AppDataSource.initialize()
         // Start server
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
+            console.log('Available routes:');
+            console.log('- POST /api/sessions');
+            console.log('- GET /api/sessions');
+            console.log('- DELETE /api/sessions/:sessionId');
+            console.log('- PATCH /api/sessions/:sessionId/activity');
         });
     })
     .catch((error) => {
