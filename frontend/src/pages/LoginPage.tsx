@@ -22,12 +22,38 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, authService, sessionServ
         setError(null);
         setIsLoading(true);
 
+        // Validate inputs
+        if (!username.trim()) {
+            setError('Please enter your username');
+            setIsLoading(false);
+            return;
+        }
+
+        if (!password.trim()) {
+            setError('Please enter your password');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const response = await authService.login(username, password);
             onLogin(response.token, response.user);
             navigate('/cars');
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'An error occurred during login');
+            // Handle specific error cases
+            if (err instanceof Error) {
+                if (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized')) {
+                    setError('Invalid username or password. Please try again.');
+                } else if (err.message.includes('404') || err.message.toLowerCase().includes('not found')) {
+                    setError('User not found. Please check your username.');
+                } else if (err.message.includes('network') || err.message.toLowerCase().includes('failed to fetch')) {
+                    setError('Network error. Please check your internet connection.');
+                } else {
+                    setError('An error occurred during login. Please try again.');
+                }
+            } else {
+                setError('An unexpected error occurred. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -39,7 +65,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, authService, sessionServ
                 <h2 className="login-title">Welcome Back</h2>
                 
                 {error && (
-                    <div className="error-message">
+                    <div className="error-message" role="alert">
+                        <span className="error-icon">⚠️</span>
                         {error}
                     </div>
                 )}
@@ -50,9 +77,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, authService, sessionServ
                         type="text"
                         id="username"
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => {
+                            setUsername(e.target.value);
+                            setError(null); // Clear error when user starts typing
+                        }}
                         placeholder="Enter your username"
                         required
+                        aria-invalid={error ? 'true' : 'false'}
+                        aria-describedby={error ? 'error-message' : undefined}
                     />
                 </div>
 
@@ -62,9 +94,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, authService, sessionServ
                         type="password"
                         id="password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setError(null); // Clear error when user starts typing
+                        }}
                         placeholder="Enter your password"
                         required
+                        aria-invalid={error ? 'true' : 'false'}
+                        aria-describedby={error ? 'error-message' : undefined}
                     />
                 </div>
 

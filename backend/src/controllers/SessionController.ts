@@ -9,8 +9,8 @@ const sessionRepo = AppDataSource.getRepository(Session);
 const userRepo = AppDataSource.getRepository(User);
 
 // Session timeout in minutes
-const SESSION_TIMEOUT = 30; // 30 minutes
-const INACTIVITY_TIMEOUT = 15; // 15 minutes
+const SESSION_TIMEOUT = process.env.SESSION_TIMEOUT ? parseInt(process.env.SESSION_TIMEOUT) : 120; // 2 hours default
+const INACTIVITY_TIMEOUT = process.env.INACTIVITY_TIMEOUT ? parseInt(process.env.INACTIVITY_TIMEOUT) : 30; // 30 minutes default
 
 export class SessionController {
     // Create a new session

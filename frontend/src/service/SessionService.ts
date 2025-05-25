@@ -12,7 +12,7 @@ export interface Session {
 
 export class SessionService extends BaseService {
     private sessionActivityInterval: NodeJS.Timeout | null = null;
-    private readonly SESSION_ACTIVITY_INTERVAL = 5 * 60 * 1000; // 5 minutes
+    private readonly SESSION_ACTIVITY_INTERVAL = 2 * 60 * 1000; // 2 minutes
 
     async createSession(token: string): Promise<Session> {
         try {
