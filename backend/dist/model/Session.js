@@ -13,35 +13,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const UserMonitoring_1 = __importDefault(require("./UserMonitoring")); // import the new entity
-const Session_1 = __importDefault(require("./Session"));
-let User = class User {
+const User_1 = __importDefault(require("./User"));
+let Session = class Session {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], User.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ unique: true }),
-    __metadata("design:type", String)
-], User.prototype, "username", void 0);
+], Session.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "password", void 0);
+], Session.prototype, "token", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: 'user' }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "role", void 0);
+], Session.prototype, "deviceInfo", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => UserMonitoring_1.default, monitoring => monitoring.user),
-    __metadata("design:type", UserMonitoring_1.default)
-], User.prototype, "monitoring", void 0);
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Boolean)
+], Session.prototype, "isActive", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Session_1.default, session => session.user),
-    __metadata("design:type", Array)
-], User.prototype, "sessions", void 0);
-User = __decorate([
-    (0, typeorm_1.Entity)('users')
-], User);
-exports.default = User;
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Session.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Session.prototype, "lastActivity", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp' }),
+    __metadata("design:type", Date)
+], Session.prototype, "expiresAt", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => User_1.default, user => user.sessions),
+    __metadata("design:type", User_1.default)
+], Session.prototype, "user", void 0);
+Session = __decorate([
+    (0, typeorm_1.Entity)('session')
+], Session);
+exports.default = Session;

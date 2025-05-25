@@ -10,6 +10,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const User_1 = __importDefault(require("../model/User"));
 const UserLog_1 = __importDefault(require("../model/UserLog"));
 const UserMonitoring_1 = __importDefault(require("../model/UserMonitoring"));
+const Session_1 = __importDefault(require("../model/Session"));
 dotenv_1.default.config();
 const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
@@ -20,9 +21,11 @@ const AppDataSource = new typeorm_1.DataSource({
     url: databaseUrl,
     synchronize: false,
     logging: true,
-    entities: [Car_1.Car, Dealership_1.Dealership, User_1.default, UserLog_1.default, UserMonitoring_1.default],
+    entities: [Car_1.Car, Dealership_1.Dealership, User_1.default, UserLog_1.default, UserMonitoring_1.default, Session_1.default],
     //migrations: ['dist/migrations/*.js'],
-    migrationsTableName: 'migrations',
+    //migrations: ['src/migrations/*.ts'],
+    //migrations: ['src/migrations/*.ts'],
+    //migrationsTableName: 'migrations',
     subscribers: [],
 });
 exports.default = AppDataSource;
