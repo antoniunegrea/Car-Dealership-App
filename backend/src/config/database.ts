@@ -22,8 +22,8 @@ const AppDataSource = new DataSource({
     entities: [Car, Dealership, User, UserLog, UserMonitoring, Session],
     //migrations: ['dist/migrations/*.js'],
     //migrations: ['src/migrations/*.ts'],
-    migrations: ['src/migrations/*.ts'],
-    migrationsTableName: 'migrations',
+    //migrations: ['src/migrations/*.ts'],
+    //migrationsTableName: 'migrations',
     subscribers: [],
 });
 
