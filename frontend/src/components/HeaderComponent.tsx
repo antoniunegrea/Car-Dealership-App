@@ -34,7 +34,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({ searchTerm, setSearchTerm }) =
     return (
         <div className="header">
             <div className="title">
-                Car Dealership
+                Toni's Car Dealership
             </div>
             <div className="search-bar-container">
                 <div className="search-wrapper">

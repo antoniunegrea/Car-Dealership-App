@@ -34,7 +34,7 @@ const HeaderComponentDealerships: React.FC<HeaderProps> = ({ searchTerm, setSear
     return (
         <div className="header">
             <div className="title">
-                Dealerships
+                Toni's Car Dealerships
             </div>
             <div className="search-bar-container">
                 <div className="search-wrapper">
