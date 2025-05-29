@@ -18,33 +18,52 @@ const UserLog_1 = __importDefault(require("../model/UserLog"));
 const User_1 = __importDefault(require("../model/User"));
 const UserMonitoring_1 = __importDefault(require("../model/UserMonitoring"));
 const ACTION_LIMIT = 5; // 5 actions
-const INTERVAL_MINUTES = 2 * 60 * 1000; // last 2 minutes
+const INTERVAL_MS = 10 * 60 * 1000; // last 10 minutes
+const UTC_DIFFERENCE = 3 * 60 * 60 * 1000;
 function checkUserActions() {
     return __awaiter(this, void 0, void 0, function* () {
         const userLogRepo = database_1.default.getRepository(UserLog_1.default);
         const userRepo = database_1.default.getRepository(User_1.default);
         const userMonitoringRepo = database_1.default.getRepository(UserMonitoring_1.default);
         console.log('Checking user actions...');
-        const since = new Date(Date.now() - INTERVAL_MINUTES);
+        const since = new Date(Date.now() - INTERVAL_MS);
+        console.log("since " + since);
+        const utcNowString = new Date().toISOString();
+        console.log(utcNowString); // e.g., "2025-05-29T09:30:00.000Z"
+        /*const nowUtc = new Date();
+        const sinceUtc = new Date(nowUtc.getTime() - INTERVAL_MS);
+    
+        console.log(`Current UTC time: ${nowUtc.toISOString()}`);
+        console.log(`Checking actions since UTC: ${sinceUtc.toISOString()}`);
+    */
         const logs = yield userLogRepo
             .createQueryBuilder('log')
             .leftJoinAndSelect('log.user', 'user')
             .where('log.timestamp > :since', { since })
             .andWhere('user.role = :role', { role: 'user' })
             .getMany();
+        console.log("logs" + logs.length);
         const actionCounts = {};
         logs.forEach(log => {
             if (log.user) {
                 actionCounts[log.user.id] = (actionCounts[log.user.id] || 0) + 1;
+                console.log("actionCounts" + actionCounts[log.user.id]);
             }
         });
+        //here we must check that the user is not already in the UserMonitoring table,if it is,we must not add it to the table
         for (const userId in actionCounts) {
+            console.log("userId" + userId);
             if (actionCounts[userId] > ACTION_LIMIT) {
                 const user = yield userRepo.findOne({ where: { id: Number(userId) } });
                 if (user) {
+                    let userMonitoring = yield userMonitoringRepo.findOne({ where: { user: { id: Number(userId) } } });
+                    if (userMonitoring) {
+                        console.log(`User ${user.username} (ID: ${userId}) is already in the UserMonitoring table.`);
+                        continue;
+                    }
                     console.log(`User ${user.username} (ID: ${userId}) exceeded action limit with ${actionCounts[userId]} actions.`);
                     // add user to the UserMonitoring table
-                    const userMonitoring = new UserMonitoring_1.default();
+                    userMonitoring = new UserMonitoring_1.default();
                     userMonitoring.user = user;
                     userMonitoring.actionCount = actionCounts[userId];
                     userMonitoring.flagged = true;

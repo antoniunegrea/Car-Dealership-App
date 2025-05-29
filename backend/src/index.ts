@@ -14,19 +14,8 @@ import { checkUserActions } from './utils/monitorUserActions';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const INTERVAL_MINUTES = 3 * 60 * 1000; // 3 minutes
+const INTERVAL_MINUTES =  2 * 60 * 1000; // 2 minutes
 
-// Detailed request logging middleware
-app.use((req, res, next) => {
-    console.log('=== Incoming Request ===');
-    console.log('Time:', new Date().toISOString());
-    console.log('Method:', req.method);
-    console.log('Path:', req.path);
-    console.log('Headers:', JSON.stringify(req.headers, null, 2));
-    console.log('Body:', JSON.stringify(req.body, null, 2));
-    console.log('=====================');
-    next();
-});
 
 // Middleware
 app.use(cors({
