@@ -27,15 +27,6 @@ function checkUserActions() {
         const userMonitoringRepo = database_1.default.getRepository(UserMonitoring_1.default);
         console.log('Checking user actions...');
         const since = new Date(Date.now() - INTERVAL_MS);
-        console.log("since " + since);
-        const utcNowString = new Date().toISOString();
-        console.log(utcNowString); // e.g., "2025-05-29T09:30:00.000Z"
-        /*const nowUtc = new Date();
-        const sinceUtc = new Date(nowUtc.getTime() - INTERVAL_MS);
-    
-        console.log(`Current UTC time: ${nowUtc.toISOString()}`);
-        console.log(`Checking actions since UTC: ${sinceUtc.toISOString()}`);
-    */
         const logs = yield userLogRepo
             .createQueryBuilder('log')
             .leftJoinAndSelect('log.user', 'user')
