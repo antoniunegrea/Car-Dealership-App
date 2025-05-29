@@ -4,7 +4,7 @@ import User from '../model/User';
 import UserMonitoring from '../model/UserMonitoring';
 
 const ACTION_LIMIT = 5; // 5 actions
-const INTERVAL_MINUTES = 2 * 60 * 1000; // last 2 minutes
+const INTERVAL_MINUTES = 10 * 60 * 1000; // last 10 minutes
 
 export async function checkUserActions() {
     const userLogRepo = AppDataSource.getRepository(UserLog);
