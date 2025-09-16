@@ -16,10 +16,9 @@ const PORT = process.env.PORT || 3000;
 
 const INTERVAL_MINUTES =  2 * 60 * 1000; // 2 minutes
 
-
 // Middleware
 app.use(cors({
-    origin: '*', // Allow all origins in production
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -60,11 +59,6 @@ AppDataSource.initialize()
         // Start server
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
-            console.log('Available routes:');
-            console.log('- POST /api/sessions');
-            console.log('- GET /api/sessions');
-            console.log('- DELETE /api/sessions/:sessionId');
-            console.log('- PATCH /api/sessions/:sessionId/activity');
         });
     })
     .catch((error) => {
